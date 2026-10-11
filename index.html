@@ -1,0 +1,805 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Portfolio of Ayush Namballa — Student & Aspiring AI Engineer building intelligent systems, machine learning models, and modern software.">
+  <meta name="keywords" content="Ayush Namballa, AI Engineer, Artificial Intelligence, Machine Learning, Deep Learning, Python, Student Portfolio">
+  <meta name="author" content="Ayush Namballa">
+
+  <!-- Open Graph / Meta -->
+  <meta property="og:type" content="website">
+  <meta property="og:title" content="Ayush Namballa | Aspiring AI Engineer">
+  <meta property="og:description" content="Student passionate about artificial intelligence, neural networks, machine learning, and next-generation software.">
+
+  <title>Ayush Namballa // Aspiring AI Engineer</title>
+
+  <!-- Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;700&family=Outfit:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+
+  <!-- Main Stylesheet -->
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <!-- Ambient Background Glows -->
+  <div class="ambient-glow glow-top-left" aria-hidden="true"></div>
+  <div class="ambient-glow glow-bottom-right" aria-hidden="true"></div>
+  <div class="ambient-glow glow-center" aria-hidden="true"></div>
+
+  <!-- Interactive Particle Background Canvas -->
+  <canvas id="particleCanvas" class="particle-canvas" aria-hidden="true"></canvas>
+
+  <!-- Navigation Bar -->
+  <header class="navbar-wrapper">
+    <nav class="navbar" id="navbar" aria-label="Main Navigation">
+      <a href="#hero" class="brand-logo" id="brandLogo">
+        <div class="logo-icon">
+          <span>AN</span>
+        </div>
+        <div class="logo-text">
+          <span class="logo-name" id="navName">Ayush Namballa</span>
+          <span class="logo-tag">ai_portfolio</span>
+        </div>
+      </a>
+
+      <!-- Status indicator pill -->
+      <div class="status-pill" title="Open to AI internships, research projects & collaborations">
+        <span class="status-dot"></span>
+        <span class="status-text">Open for AI Opportunities</span>
+      </div>
+
+      <!-- Navigation Links -->
+      <ul class="nav-links" id="navLinks">
+        <li><a href="#about" class="nav-link"><span>01.</span> About</a></li>
+        <li><a href="#skills" class="nav-link"><span>02.</span> AI Arsenal</a></li>
+        <li><a href="#projects" class="nav-link"><span>03.</span> Projects</a></li>
+        <li><a href="#experience" class="nav-link"><span>04.</span> Journey</a></li>
+        <li><a href="#terminal" class="nav-link"><span>05.</span> Terminal</a></li>
+        <li><a href="#contact" class="nav-link"><span>06.</span> Contact</a></li>
+      </ul>
+
+      <!-- Action Button & Mobile Menu Toggle -->
+      <div class="nav-actions">
+        <a href="#contact" class="btn btn-sm btn-primary">Connect</a>
+        <button class="hamburger-btn" id="mobileMenuBtn" aria-label="Toggle Mobile Menu" aria-expanded="false">
+          <span class="bar"></span>
+          <span class="bar"></span>
+          <span class="bar"></span>
+        </button>
+      </div>
+    </nav>
+  </header>
+
+  <!-- Main Content Container -->
+  <main>
+    <!-- HERO SECTION -->
+    <section class="hero-section" id="hero">
+      <div class="hero-container">
+        <!-- Floating badge -->
+        <div class="badge hero-badge">
+          <span class="badge-icon">🧠</span>
+          <span class="badge-text">Student &bull; Aspiring AI Engineer &bull; Machine Learning Explorer</span>
+        </div>
+
+        <!-- Hero Headline -->
+        <h1 class="hero-title">
+          Pioneering <span class="gradient-text glow-text">intelligent futures</span> with code &amp; AI.
+        </h1>
+
+        <!-- Typing tagline -->
+        <p class="hero-subtitle">
+          Hello! I'm <strong class="highlight-text" id="heroName">Ayush Namballa</strong>, a student dedicated to learning and building
+          <span class="typing-text-wrapper">
+            <span id="typedElement" class="typed-text"></span>
+            <span class="typing-cursor">|</span>
+          </span>
+        </p>
+
+        <!-- CTA Buttons -->
+        <div class="hero-cta-group">
+          <a href="#projects" class="btn btn-lg btn-primary glow-button">
+            <span>Explore AI Work</span>
+            <svg class="btn-icon" viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2"><path d="M7 17l9.2-9.2M17 17V7H7"/></svg>
+          </a>
+          <a href="#terminal" class="btn btn-lg btn-glass">
+            <span class="terminal-prompt-icon">>_</span>
+            <span>AI Terminal Deck</span>
+          </a>
+          <a href="https://github.com/AYUSH0607-ux/AYUSH0607-ux" target="_blank" rel="noopener noreferrer" class="btn btn-lg btn-outline" id="quickGithubBtn">
+            <svg class="btn-icon" viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 19c-5 1.5-5-2.5-7-3m14 6v-3.87a3.37 3.37 0 0 0-.94-2.61c3.14-.35 6.44-1.54 6.44-7A5.44 5.44 0 0 0 20 4.77 5.07 5.07 0 0 0 19.91 1S18.73.65 16 2.48a13.38 13.38 0 0 0-7 0C6.27.65 5.09 1 5.09 1A5.07 5.07 0 0 0 5 4.77a5.44 5.44 0 0 0-1.5 3.78c0 5.42 3.3 6.61 6.44 7A3.37 3.37 0 0 0 9 18.13V22"/></svg>
+            <span>GitHub Profile</span>
+          </a>
+        </div>
+
+        <!-- Quick Stats HUD -->
+        <div class="hero-stats-hud">
+          <div class="hud-stat-item">
+            <span class="hud-number" data-count="100">0</span><span class="hud-suffix">%</span>
+            <span class="hud-label">AI Dedication</span>
+          </div>
+          <div class="hud-divider"></div>
+          <div class="hud-stat-item">
+            <span class="hud-number" data-count="10">0</span><span class="hud-suffix">+</span>
+            <span class="hud-label">Core Tech Skills</span>
+          </div>
+          <div class="hud-divider"></div>
+          <div class="hud-stat-item">
+            <span class="hud-number" data-count="24">0</span><span class="hud-suffix">/7</span>
+            <span class="hud-label">Curiosity &amp; Drive</span>
+          </div>
+          <div class="hud-divider"></div>
+          <div class="hud-stat-item">
+            <span class="hud-number" data-count="1">0</span><span class="hud-suffix">st</span>
+            <span class="hud-label">Website Shipped!</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Scroll Indicator -->
+      <a href="#about" class="scroll-down-hint" aria-label="Scroll to about section">
+        <span class="mouse-icon">
+          <span class="mouse-wheel"></span>
+        </span>
+        <span class="scroll-text">SCROLL DOWN</span>
+      </a>
+    </section>
+
+    <!-- ABOUT SECTION (Bento Grid) -->
+    <section class="section about-section" id="about">
+      <div class="section-container">
+        <div class="section-header">
+          <div class="section-badge">01. ABOUT AYUSH</div>
+          <h2 class="section-title">Driven by curiosity, focused on <span class="gradient-text">Artificial Intelligence</span>.</h2>
+          <p class="section-desc">My journey as a student exploring neural networks, machine learning algorithms, and intelligent software.</p>
+        </div>
+
+        <div class="bento-grid">
+          <!-- Bento 1: Story -->
+          <div class="bento-card bento-card-large glass-card">
+            <div class="card-glow"></div>
+            <div class="bento-icon-badge">🤖</div>
+            <h3 class="bento-card-title">The Vision &amp; AI Mission</h3>
+            <p class="bento-text">
+              I am <strong>Ayush Namballa</strong>, an ambitious student driven by the desire to solve challenging real-world problems using <strong>Artificial Intelligence and Machine Learning</strong>.
+            </p>
+            <p class="bento-text">
+              From mathematical foundations to training neural network models and deploying intelligent web interfaces, I constantly experiment with cutting-edge tools, Python architectures, and AI agent frameworks. My goal is to become an <strong>AI Engineer</strong> who builds software that empowers people worldwide.
+            </p>
+            <div class="bento-tags">
+              <span class="tag">Aspiring AI Engineer</span>
+              <span class="tag">Machine Learning</span>
+              <span class="tag">Python &amp; PyTorch</span>
+              <span class="tag">Deep Learning</span>
+              <span class="tag">Problem Solver</span>
+            </div>
+          </div>
+
+          <!-- Bento 2: Quick Spec Sheet -->
+          <div class="bento-card glass-card">
+            <div class="card-glow"></div>
+            <div class="bento-icon-badge">⚡</div>
+            <h3 class="bento-card-title">Profile Snapshot</h3>
+            <ul class="spec-list">
+              <li>
+                <span class="spec-key">Name</span>
+                <span class="spec-val">Ayush Namballa</span>
+              </li>
+              <li>
+                <span class="spec-key">Role</span>
+                <span class="spec-val">Student &amp; AI Aspirant</span>
+              </li>
+              <li>
+                <span class="spec-key">GitHub</span>
+                <a href="https://github.com/AYUSH0607-ux/AYUSH0607-ux" target="_blank" rel="noopener noreferrer" class="spec-val" style="color: var(--accent-cyan); text-decoration: none;">AYUSH0607-ux</a>
+              </li>
+              <li>
+                <span class="spec-key">Email</span>
+                <a href="mailto:namballaayus@gmail.com" class="spec-val" style="color: var(--accent-cyan); text-decoration: none;">namballaayus@gmail.com</a>
+              </li>
+              <li>
+                <span class="spec-key">Status</span>
+                <span class="spec-val highlight-val">🟢 Open to AI Internships</span>
+              </li>
+            </ul>
+          </div>
+
+          <!-- Bento 3: Work Values -->
+          <div class="bento-card glass-card">
+            <div class="card-glow"></div>
+            <div class="bento-icon-badge">🎯</div>
+            <h3 class="bento-card-title">Core Principles</h3>
+            <div class="principle-item">
+              <strong>1. First-Principles Thinking:</strong>
+              <span>Understanding the underlying math, data dynamics, and logic behind every algorithm.</span>
+            </div>
+            <div class="principle-item">
+              <strong>2. Consistent Practice:</strong>
+              <span>Writing code daily, testing models, and turning theoretical ideas into working code.</span>
+            </div>
+            <div class="principle-item">
+              <strong>3. Continuous AI Exploration:</strong>
+              <span>Staying abreast with modern LLMs, Transformers, and agentic workflows.</span>
+            </div>
+          </div>
+
+          <!-- Bento 4: Interactive Quote / Live Clock -->
+          <div class="bento-card bento-card-wide glass-card live-hud-card">
+            <div class="card-glow"></div>
+            <div class="live-hud-content">
+              <div>
+                <span class="live-hud-pill">AYUSH'S LOCAL SYSTEM TIME</span>
+                <h4 class="live-clock-display" id="liveClock">00:00:00 LOCAL</h4>
+                <p class="live-clock-sub">System Online // All AI Neural Pipelines Ready</p>
+              </div>
+              <div class="live-hud-actions">
+                <a href="#contact" class="btn btn-sm btn-primary">Send Transmission</a>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- SKILLS SECTION -->
+    <section class="section skills-section" id="skills">
+      <div class="section-container">
+        <div class="section-header">
+          <div class="section-badge">02. TECHNICAL ARSENAL</div>
+          <h2 class="section-title">Languages, AI tools &amp; <span class="gradient-text">foundations</span>.</h2>
+          <p class="section-desc">Key technical proficiencies and technologies I work with to design and engineer systems.</p>
+        </div>
+
+        <!-- Filter tabs -->
+        <div class="filter-tabs-container">
+          <div class="filter-tabs" role="tablist">
+            <button class="filter-tab active" data-filter="all" role="tab">All Tools</button>
+            <button class="filter-tab" data-filter="ai-data" role="tab">AI &amp; Data</button>
+            <button class="filter-tab" data-filter="languages" role="tab">Core Languages</button>
+            <button class="filter-tab" data-filter="web-tools" role="tab">Web &amp; Tools</button>
+          </div>
+        </div>
+
+        <!-- Skill Cards Grid -->
+        <div class="skills-grid" id="skillsGrid">
+          <!-- Python -->
+          <div class="skill-card glass-card" data-category="languages">
+            <div class="card-glow"></div>
+            <div class="skill-header">
+              <div class="skill-icon-wrap py-icon">Py</div>
+              <div class="skill-meta">
+                <h3 class="skill-name">Python</h3>
+                <span class="skill-level">Core Focus</span>
+              </div>
+            </div>
+            <p class="skill-desc">The primary language for PyQt5 desktop GUIs, OpenWeather REST APIs, automation routines, data structures, and AI engineering.</p>
+            <div class="skill-meter">
+              <div class="skill-meter-fill" style="width: 88%"></div>
+            </div>
+          </div>
+
+          <!-- Machine Learning & Deep Learning -->
+          <div class="skill-card glass-card" data-category="ai-data">
+            <div class="card-glow"></div>
+            <div class="skill-header">
+              <div class="skill-icon-wrap ai-icon">ML</div>
+              <div class="skill-meta">
+                <h3 class="skill-name">Machine Learning</h3>
+                <span class="skill-level">Studying &amp; Applying</span>
+              </div>
+            </div>
+            <p class="skill-desc">Supervised &amp; unsupervised learning, neural network layers, loss optimization, and feature engineering.</p>
+            <div class="skill-meter">
+              <div class="skill-meter-fill" style="width: 82%"></div>
+            </div>
+          </div>
+
+          <!-- AI APIs & LLMs -->
+          <div class="skill-card glass-card" data-category="ai-data">
+            <div class="card-glow"></div>
+            <div class="skill-header">
+              <div class="skill-icon-wrap ai-icon">AI</div>
+              <div class="skill-meta">
+                <h3 class="skill-name">LLM &amp; Generative AI</h3>
+                <span class="skill-level">Active Explorer</span>
+              </div>
+            </div>
+            <p class="skill-desc">Building agentic workflows, prompt engineering, embeddings, and integrating Gemini/OpenAI APIs.</p>
+            <div class="skill-meter">
+              <div class="skill-meter-fill" style="width: 86%"></div>
+            </div>
+          </div>
+
+          <!-- Data Structures & Algorithms -->
+          <div class="skill-card glass-card" data-category="languages">
+            <div class="card-glow"></div>
+            <div class="skill-header">
+              <div class="skill-icon-wrap db-icon">DSA</div>
+              <div class="skill-meta">
+                <h3 class="skill-name">Data Structures &amp; Algorithms</h3>
+                <span class="skill-level">Active Study</span>
+              </div>
+            </div>
+            <p class="skill-desc">Algorithmic complexity, arrays, trees, graphs, sorting, and dynamic programming fundamentals.</p>
+            <div class="skill-meter">
+              <div class="skill-meter-fill" style="width: 80%"></div>
+            </div>
+          </div>
+
+          <!-- JavaScript / Modern Web -->
+          <div class="skill-card glass-card" data-category="web-tools">
+            <div class="card-glow"></div>
+            <div class="skill-header">
+              <div class="skill-icon-wrap js-icon">JS</div>
+              <div class="skill-meta">
+                <h3 class="skill-name">JavaScript &amp; HTML5</h3>
+                <span class="skill-level">Proficient</span>
+              </div>
+            </div>
+            <p class="skill-desc">Building responsive web frontends, interactive UI interfaces, and integrating APIs into client apps.</p>
+            <div class="skill-meter">
+              <div class="skill-meter-fill" style="width: 85%"></div>
+            </div>
+          </div>
+
+          <!-- Modern CSS & Glassmorphism -->
+          <div class="skill-card glass-card" data-category="web-tools">
+            <div class="card-glow"></div>
+            <div class="skill-header">
+              <div class="skill-icon-wrap css-icon">CSS</div>
+              <div class="skill-meta">
+                <h3 class="skill-name">Modern CSS3 &amp; UI</h3>
+                <span class="skill-level">Proficient</span>
+              </div>
+            </div>
+            <p class="skill-desc">CSS Grid, Flexbox, glassmorphic styling, animations, responsive design, and design systems.</p>
+            <div class="skill-meter">
+              <div class="skill-meter-fill" style="width: 90%"></div>
+            </div>
+          </div>
+
+          <!-- Git & GitHub -->
+          <div class="skill-card glass-card" data-category="web-tools">
+            <div class="card-glow"></div>
+            <div class="skill-header">
+              <div class="skill-icon-wrap git-icon">Git</div>
+              <div class="skill-meta">
+                <h3 class="skill-name">Git &amp; GitHub</h3>
+                <span class="skill-level">Proficient</span>
+              </div>
+            </div>
+            <p class="skill-desc">Version control, repository management, collaborative workflows, and open-source contribution.</p>
+            <div class="skill-meter">
+              <div class="skill-meter-fill" style="width: 84%"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- PROJECTS SECTION -->
+    <section class="section projects-section" id="projects">
+      <div class="section-container">
+        <div class="section-header">
+          <div class="section-badge">03. LEARNING MILESTONES &amp; PROJECTS</div>
+          <h2 class="section-title">Authentic learning &amp; <span class="gradient-text">hands-on building</span>.</h2>
+          <p class="section-desc">Real milestones from my journey: shipped projects, active coding labs, and continuous exploration.</p>
+        </div>
+
+        <div class="projects-grid" id="projectsGrid">
+          <!-- Project 1: Shipped Portfolio -->
+          <article class="project-card glass-card">
+            <div class="card-glow"></div>
+            <div class="project-preview preview-cyber-1">
+              <div class="preview-badge" style="background: rgba(16, 185, 129, 0.3); border-color: rgba(16, 185, 129, 0.5); color: #6ee7b7;">🟢 Shipped &amp; Live</div>
+              <div class="preview-overlay">
+                <span class="preview-pill">First Ever Web Project</span>
+              </div>
+              <div class="project-visual-graphic">
+                <div class="visual-circle"></div>
+                <div class="visual-code-tag">&lt;AyushPortfolio /&gt;</div>
+              </div>
+            </div>
+            <div class="project-body">
+              <div class="project-meta-top">
+                <span class="project-date">2026</span>
+                <span class="project-stars" style="color: #6ee7b7;">★ 1st Shipped Website</span>
+              </div>
+              <h3 class="project-title">CyberGlass Developer Portfolio</h3>
+              <p class="project-description">
+                My very first web development project! Built using semantic HTML5, modern dark glassmorphism, responsive CSS, interactive canvas particles, and a simulated command terminal.
+              </p>
+              <div class="project-tech-tags">
+                <span class="tech-tag">HTML5</span>
+                <span class="tech-tag">CSS3 Glassmorphism</span>
+                <span class="tech-tag">Vanilla JavaScript</span>
+                <span class="tech-tag">Canvas API</span>
+              </div>
+              <div class="project-footer">
+                <a href="#hero" class="project-link demo-link">
+                  <span>Explore Here</span>
+                  <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6M15 3h6v6M10 14L21 3"/></svg>
+                </a>
+                <a href="https://github.com/AYUSH0607-ux/AYUSH0607-ux" target="_blank" rel="noopener noreferrer" class="project-link code-link">
+                  <span>GitHub Profile</span>
+                  <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 19c-5 1.5-5-2.5-7-3m14 6v-3.87a3.37 3.37 0 0 0-.94-2.61c3.14-.35 6.44-1.54 6.44-7A5.44 5.44 0 0 0 20 4.77 5.07 5.07 0 0 0 19.91 1S18.73.65 16 2.48a13.38 13.38 0 0 0-7 0C6.27.65 5.09 1 5.09 1A5.07 5.07 0 0 0 5 4.77a5.44 5.44 0 0 0-1.5 3.78c0 5.42 3.3 6.61 6.44 7A3.37 3.37 0 0 0 9 18.13V22"/></svg>
+                </a>
+              </div>
+            </div>
+          </article>
+
+          <!-- Project 2: Python Desktop GUIs, Automation & AI Suite -->
+          <article class="project-card glass-card">
+            <div class="card-glow"></div>
+            <div class="project-preview preview-cyber-2">
+              <div class="preview-badge" style="background: rgba(0, 242, 254, 0.25); border-color: rgba(0, 242, 254, 0.5); color: #00f2fe;">⚡ 14+ Built Applications</div>
+              <div class="preview-overlay">
+                <span class="preview-pill">PyQt5 Desktop GUIs &bull; APIs &bull; AI Logic</span>
+              </div>
+              <div class="project-visual-graphic">
+                <div class="visual-circle" style="border-color: #a855f7;"></div>
+                <div class="visual-code-tag">&lt;Python_AI_Suite /&gt;</div>
+              </div>
+            </div>
+            <div class="project-body">
+              <div class="project-meta-top">
+                <span class="project-date">2026 — Active Suite</span>
+                <span class="project-stars" style="color: #00f2fe;">★ 14 Shipped Scripts &amp; GUIs</span>
+              </div>
+              <h3 class="project-title">Python Desktop GUIs, Automation &amp; AI Suite</h3>
+              <p class="project-description">
+                Comprehensive collection of 14+ engineered Python programs spanning modern <strong>PyQt5 Desktop GUIs</strong> (Live OpenWeather API app, Cyber Digital Clock, Precision Stopwatch), <strong>System Utilities &amp; Automation</strong> (QR Code generator, Banking manager, Task tracker), and <strong>Interactive Game &amp; Logic Engines</strong> (Casino Slot Machine, AI Rock-Paper-Scissors, Quiz Engine).
+              </p>
+
+              <!-- Quick Sub-project highlights -->
+              <div class="project-sub-pills">
+                <span class="sub-pill">🌦️ PyQt5 Weather App</span>
+                <span class="sub-pill">⏱️ Precision Stopwatch</span>
+                <span class="sub-pill">⏰ Cyber Digital Clock</span>
+                <span class="sub-pill">🎰 Casino Slot Machine</span>
+                <span class="sub-pill">🏦 Banking &amp; Tasks</span>
+              </div>
+
+              <div class="project-tech-tags">
+                <span class="tech-tag">Python 3</span>
+                <span class="tech-tag">PyQt5 Desktop GUI</span>
+                <span class="tech-tag">OpenWeather REST API</span>
+                <span class="tech-tag">qrcode Imaging</span>
+                <span class="tech-tag">OOP &amp; State Logic</span>
+                <span class="tech-tag">Algorithms</span>
+              </div>
+              <div class="project-footer">
+                <a href="#projects" class="project-link demo-link" onclick="openProjectModal(1); return false;">
+                  <span>Explore All 14 Apps</span>
+                  <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6M15 3h6v6M10 14L21 3"/></svg>
+                </a>
+                <a href="https://github.com/AYUSH0607-ux/python-mini-projects" target="_blank" rel="noopener noreferrer" class="project-link code-link">
+                  <span>GitHub Repo</span>
+                  <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 19c-5 1.5-5-2.5-7-3m14 6v-3.87a3.37 3.37 0 0 0-.94-2.61c3.14-.35 6.44-1.54 6.44-7A5.44 5.44 0 0 0 20 4.77 5.07 5.07 0 0 0 19.91 1S18.73.65 16 2.48a13.38 13.38 0 0 0-7 0C6.27.65 5.09 1 5.09 1A5.07 5.07 0 0 0 5 4.77a5.44 5.44 0 0 0-1.5 3.78c0 5.42 3.3 6.61 6.44 7A3.37 3.37 0 0 0 9 18.13V22"/></svg>
+                </a>
+              </div>
+            </div>
+          </article>
+
+          <!-- Project 3: Problem Solving & DSA -->
+          <article class="project-card glass-card">
+            <div class="card-glow"></div>
+            <div class="project-preview preview-cyber-3">
+              <div class="preview-badge" style="background: rgba(245, 158, 11, 0.2); border-color: rgba(245, 158, 11, 0.4); color: #fbbf24;">📚 Academic Focus</div>
+              <div class="preview-overlay">
+                <span class="preview-pill">Algorithms &amp; Problem Solving</span>
+              </div>
+              <div class="project-visual-graphic">
+                <div class="visual-cube"></div>
+                <div class="visual-code-tag">DSA_Practice</div>
+              </div>
+            </div>
+            <div class="project-body">
+              <div class="project-meta-top">
+                <span class="project-date">2026 — Present</span>
+                <span class="project-stars">Daily Practice</span>
+              </div>
+              <h3 class="project-title">DSA &amp; LeetCode Solutions</h3>
+              <p class="project-description">
+                My dedicated repository containing solutions to LeetCode and Data Structures &amp; Algorithms challenges. Focused on algorithmic intuition, optimal Big-O complexity, and consistent daily practice.
+              </p>
+              <div class="project-tech-tags">
+                <span class="tech-tag">LeetCode</span>
+                <span class="tech-tag">Data Structures</span>
+                <span class="tech-tag">Algorithms</span>
+                <span class="tech-tag">Python / C++</span>
+              </div>
+              <div class="project-footer">
+                <a href="#projects" class="project-link demo-link" onclick="openProjectModal(2); return false;">
+                  <span>Study Focus</span>
+                  <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6M15 3h6v6M10 14L21 3"/></svg>
+                </a>
+                <a href="https://github.com/AYUSH0607-ux/dsa-leetcode-solutions" target="_blank" rel="noopener noreferrer" class="project-link code-link">
+                  <span>GitHub Repo</span>
+                  <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 19c-5 1.5-5-2.5-7-3m14 6v-3.87a3.37 3.37 0 0 0-.94-2.61c3.14-.35 6.44-1.54 6.44-7A5.44 5.44 0 0 0 20 4.77 5.07 5.07 0 0 0 19.91 1S18.73.65 16 2.48a13.38 13.38 0 0 0-7 0C6.27.65 5.09 1 5.09 1A5.07 5.07 0 0 0 5 4.77a5.44 5.44 0 0 0-1.5 3.78c0 5.42 3.3 6.61 6.44 7A3.37 3.37 0 0 0 9 18.13V22"/></svg>
+                </a>
+              </div>
+            </div>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <!-- EXPERIENCE / MILESTONES SECTION -->
+    <section class="section experience-section" id="experience">
+      <div class="section-container">
+        <div class="section-header">
+          <div class="section-badge">04. MILESTONES &amp; JOURNEY</div>
+          <h2 class="section-title">Academic path &amp; <span class="gradient-text">learning growth</span>.</h2>
+          <p class="section-desc">My ongoing journey in mastering computer science, software engineering, and AI.</p>
+        </div>
+
+        <div class="timeline-container">
+          <div class="timeline-line"></div>
+
+          <!-- Timeline Item 1 -->
+          <div class="timeline-item">
+            <div class="timeline-dot"></div>
+            <div class="timeline-card glass-card">
+              <div class="timeline-header">
+                <div>
+                  <span class="timeline-tag">Current Milestone</span>
+                  <h3 class="timeline-title">Student &amp; Aspiring AI Engineer</h3>
+                  <span class="timeline-company">Self-Directed AI Exploration &amp; Academics</span>
+                </div>
+                <div class="timeline-date">2026 — Present</div>
+              </div>
+              <p class="timeline-desc">
+                Focusing on Machine Learning algorithms, Python pipelines, deep learning architectures, prompt engineering, and building practical projects.
+              </p>
+              <div class="timeline-badges">
+                <span>Machine Learning</span>
+                <span>Python</span>
+                <span>AI Engineering</span>
+                <span>Problem Solving</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Timeline Item 2 -->
+          <div class="timeline-item">
+            <div class="timeline-dot"></div>
+            <div class="timeline-card glass-card">
+              <div class="timeline-header">
+                <div>
+                  <span class="timeline-tag">First Web Milestone</span>
+                  <h3 class="timeline-title">Built &amp; Launched First Personal Website</h3>
+                  <span class="timeline-company">Open Source &amp; Modern Web Tech</span>
+                </div>
+                <div class="timeline-date">2026</div>
+              </div>
+              <p class="timeline-desc">
+                Designed and built a complete responsive developer portfolio with modern dark glassmorphism, interactive terminal playground, and dynamic particle animations.
+              </p>
+              <div class="timeline-badges">
+                <span>HTML5 / CSS3</span>
+                <span>JavaScript</span>
+                <span>UI/UX</span>
+                <span>GitHub</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- INTERACTIVE TERMINAL SECTION -->
+    <section class="section terminal-section" id="terminal">
+      <div class="section-container">
+        <div class="section-header">
+          <div class="section-badge">05. AYUSH'S COMMAND DECK</div>
+          <h2 class="section-title">Interactive <span class="gradient-text">terminal playground</span>.</h2>
+          <p class="section-desc">Test commands in Ayush's terminal console or click the shortcut chips below.</p>
+        </div>
+
+        <div class="terminal-deck glass-card">
+          <!-- Terminal Window Header -->
+          <div class="terminal-header">
+            <div class="terminal-controls">
+              <span class="control-dot dot-red" title="Close"></span>
+              <span class="control-dot dot-yellow" title="Minimize"></span>
+              <span class="control-dot dot-green" title="Maximize"></span>
+            </div>
+            <div class="terminal-tab">
+              <span class="terminal-tab-icon">🧠</span>
+              <span class="terminal-tab-title">ayush@ai-station: ~/system (zsh)</span>
+            </div>
+            <div class="terminal-badge-right">
+              <span class="badge-status-dot"></span>
+              <span>AYUSH_ONLINE</span>
+            </div>
+          </div>
+
+          <!-- Quick Command Shortcuts -->
+          <div class="terminal-shortcuts">
+            <span class="shortcuts-label">Quick Commands:</span>
+            <button class="cmd-chip" data-cmd="help">help</button>
+            <button class="cmd-chip" data-cmd="about">about</button>
+            <button class="cmd-chip" data-cmd="skills">skills</button>
+            <button class="cmd-chip" data-cmd="projects">projects</button>
+            <button class="cmd-chip" data-cmd="python">python</button>
+            <button class="cmd-chip" data-cmd="contact">contact</button>
+            <button class="cmd-chip" data-cmd="matrix">matrix</button>
+            <button class="cmd-chip" data-cmd="clear">clear</button>
+          </div>
+
+          <!-- Terminal Screen Body -->
+          <div class="terminal-body" id="terminalBody">
+            <div class="term-line output-system">
+              <span class="term-highlight">=====================================================</span><br>
+              <span class="term-cyan">🧠 AYUSH NAMBALLA — AI TERMINAL ONLINE</span><br>
+              Type <span class="term-yellow">'help'</span> to see available commands or click the shortcut chips.<br>
+              <span class="term-highlight">=====================================================</span>
+            </div>
+          </div>
+
+          <!-- Terminal Input Row -->
+          <form class="terminal-input-row" id="terminalForm">
+            <span class="terminal-prompt-user">ayush@ai-station:~$</span>
+            <input type="text" id="terminalInput" class="terminal-input" autocomplete="off" spellcheck="false" placeholder="Type a command (e.g. 'about')...">
+            <button type="submit" class="terminal-send-btn" aria-label="Execute command">
+              <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+            </button>
+          </form>
+        </div>
+      </div>
+    </section>
+
+    <!-- CONTACT SECTION -->
+    <section class="section contact-section" id="contact">
+      <div class="section-container">
+        <div class="section-header">
+          <div class="section-badge">06. CONNECT WITH AYUSH</div>
+          <h2 class="section-title">Let's discuss <span class="gradient-text">AI, ideas &amp; opportunities</span>.</h2>
+          <p class="section-desc">Looking to collaborate on an AI project, discuss internships, or say hello? Reach out anytime!</p>
+        </div>
+
+        <div class="contact-grid">
+          <!-- Left: Contact Details & Direct Links -->
+          <div class="contact-info-card glass-card">
+            <div class="card-glow"></div>
+            <h3 class="contact-card-title">Communication Channels</h3>
+            <p class="contact-card-subtitle">
+              Reach out directly to Ayush via email or check out code repositories on GitHub.
+            </p>
+
+            <div class="contact-methods">
+              <!-- Email Item with Copy Button -->
+              <div class="contact-method-item">
+                <div class="method-icon-wrap">
+                  <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
+                </div>
+                <div class="method-details">
+                  <span class="method-label">Direct Email</span>
+                  <a href="mailto:namballaayus@gmail.com" class="method-value" id="emailDisplay">namballaayus@gmail.com</a>
+                </div>
+                <button class="copy-btn" id="copyEmailBtn" title="Copy email address">
+                  <svg class="copy-icon" viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
+                  <span class="copy-tooltip" id="copyTooltip">Copy</span>
+                </button>
+              </div>
+
+              <!-- GitHub Profile Item -->
+              <div class="contact-method-item">
+                <div class="method-icon-wrap">
+                  <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 19c-5 1.5-5-2.5-7-3m14 6v-3.87a3.37 3.37 0 0 0-.94-2.61c3.14-.35 6.44-1.54 6.44-7A5.44 5.44 0 0 0 20 4.77 5.07 5.07 0 0 0 19.91 1S18.73.65 16 2.48a13.38 13.38 0 0 0-7 0C6.27.65 5.09 1 5.09 1A5.07 5.07 0 0 0 5 4.77a5.44 5.44 0 0 0-1.5 3.78c0 5.42 3.3 6.61 6.44 7A3.37 3.37 0 0 0 9 18.13V22"/></svg>
+                </div>
+                <div class="method-details">
+                  <span class="method-label">GitHub Repository</span>
+                  <a href="https://github.com/AYUSH0607-ux/AYUSH0607-ux" target="_blank" rel="noopener noreferrer" class="method-value">AYUSH0607-ux</a>
+                </div>
+              </div>
+
+              <!-- Role Status Item -->
+              <div class="contact-method-item">
+                <div class="method-icon-wrap">
+                  <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+                </div>
+                <div class="method-details">
+                  <span class="method-label">Opportunity Status</span>
+                  <span class="method-value">Open to AI Internships &amp; Collaborations</span>
+                </div>
+              </div>
+            </div>
+
+            <!-- Social Links Matrix -->
+            <div class="social-links-deck">
+              <span class="social-deck-label">Profiles:</span>
+              <div class="social-buttons">
+                <!-- GitHub -->
+                <a href="https://github.com/AYUSH0607-ux/AYUSH0607-ux" target="_blank" rel="noopener noreferrer" class="social-btn" title="Ayush's GitHub Profile">
+                  <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 19c-5 1.5-5-2.5-7-3m14 6v-3.87a3.37 3.37 0 0 0-.94-2.61c3.14-.35 6.44-1.54 6.44-7A5.44 5.44 0 0 0 20 4.77 5.07 5.07 0 0 0 19.91 1S18.73.65 16 2.48a13.38 13.38 0 0 0-7 0C6.27.65 5.09 1 5.09 1A5.07 5.07 0 0 0 5 4.77a5.44 5.44 0 0 0-1.5 3.78c0 5.42 3.3 6.61 6.44 7A3.37 3.37 0 0 0 9 18.13V22"/></svg>
+                </a>
+                <!-- Email -->
+                <a href="mailto:namballaayus@gmail.com" class="social-btn" title="Send Email">
+                  <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
+                </a>
+              </div>
+            </div>
+          </div>
+
+          <!-- Right: Interactive Transmission Form -->
+          <div class="contact-form-card glass-card">
+            <div class="card-glow"></div>
+            <form id="contactForm" class="contact-form">
+              <div class="form-row">
+                <div class="form-group">
+                  <label for="senderName" class="form-label">Your Name</label>
+                  <input type="text" id="senderName" class="form-input" placeholder="e.g. Recruiter / Collaborator" required>
+                </div>
+                <div class="form-group">
+                  <label for="senderEmail" class="form-label">Your Email</label>
+                  <input type="email" id="senderEmail" class="form-input" placeholder="e.g. recruiter@company.com" required>
+                </div>
+              </div>
+
+              <div class="form-group">
+                <label for="messageSubject" class="form-label">Subject</label>
+                <input type="text" id="messageSubject" class="form-input" placeholder="AI Internship / Project Idea / Connect" required>
+              </div>
+
+              <div class="form-group">
+                <label for="messageBody" class="form-label">Message Transmission to Ayush</label>
+                <textarea id="messageBody" rows="5" class="form-input form-textarea" placeholder="Write your message here..." required></textarea>
+              </div>
+
+              <button type="submit" class="btn btn-lg btn-primary btn-submit glow-button" id="submitBtn">
+                <span class="btn-text">Transmit Message</span>
+                <svg class="btn-icon" viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg>
+              </button>
+
+              <div class="form-status-message" id="formStatusMsg" aria-live="polite"></div>
+            </form>
+          </div>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <!-- Interactive Project Details Modal -->
+  <div class="modal-backdrop" id="projectModal" aria-hidden="true">
+    <div class="modal-dialog glass-card">
+      <button class="modal-close-btn" id="modalCloseBtn" aria-label="Close modal">&times;</button>
+      <div class="modal-content" id="modalContent">
+        <!-- Dynamically injected via script.js -->
+      </div>
+    </div>
+  </div>
+
+  <!-- Footer -->
+  <footer class="footer">
+    <div class="footer-container">
+      <div class="footer-top">
+        <div class="footer-brand">
+          <div class="logo-icon sm"><span>AN</span></div>
+          <span class="footer-name">Ayush Namballa</span>
+          <span class="footer-copy">— Student &amp; Aspiring AI Engineer</span>
+        </div>
+        <a href="#hero" class="back-to-top" aria-label="Back to top">
+          <span>Back to Top</span>
+          <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 15l-6-6-6 6"/></svg>
+        </a>
+      </div>
+      <div class="footer-bottom">
+        <p class="footer-meta">© <span id="currentYear">2026</span> Ayush Namballa. Built with modern HTML5, CSS3 Glassmorphism &amp; JavaScript.</p>
+        <div class="footer-indicator">
+          <span class="status-dot"></span>
+          <span>AI SYSTEM ONLINE</span>
+        </div>
+      </div>
+    </div>
+  </footer>
+
+  <!-- Notification Toast Container -->
+  <div class="toast-container" id="toastContainer" aria-live="polite"></div>
+
+  <!-- Core JavaScript -->
+  <script src="script.js"></script>
+</body>
+</html>
