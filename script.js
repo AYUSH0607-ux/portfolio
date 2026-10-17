@@ -292,37 +292,35 @@ function initParticleCanvas() {
     { fill: "rgba(255, 0, 128,", glow: "#ff0080" }      // Cyberpunk Pink Accent
   ];
 
-  class StationaryBall {
-    constructor(originX, originY) {
-      // Anchored constant home position
-      this.originX = originX;
-      this.originY = originY;
-      this.x = originX;
-      this.y = originY;
+  class FloatingBall {
+    constructor() {
+      this.x = Math.random() * width;
+      this.y = Math.random() * height;
+
+      // Slow, relaxing ambient continuous drift
+      this.vx = (Math.random() - 0.5) * 0.45;
+      this.vy = (Math.random() - 0.5) * 0.45;
 
       // Tiered ball sizing:
-      // ~60% small micro-balls (2px - 3.5px)
-      // ~28% medium glowing energy balls (4px - 8px)
-      // ~12% large cyber orbs (11px - 22px)
+      // ~60% small micro-balls (1.8px - 3.2px)
+      // ~28% medium glowing energy balls (4px - 7px)
+      // ~12% large cyber orbs (10px - 20px)
       const rand = Math.random();
       if (rand < 0.60) {
-        this.baseSize = Math.random() * 1.8 + 1.8;
+        this.baseSize = Math.random() * 1.6 + 1.8;
         this.type = "small";
         this.baseAlpha = Math.random() * 0.45 + 0.35;
-        this.maxDisplacement = 34; // Max deflection in pixels (never flies off)
-        this.baseEase = 0.065;
+        this.repelStrength = 3.2;
       } else if (rand < 0.88) {
-        this.baseSize = Math.random() * 3.5 + 4;
+        this.baseSize = Math.random() * 3 + 4;
         this.type = "medium";
         this.baseAlpha = Math.random() * 0.4 + 0.3;
-        this.maxDisplacement = 24;
-        this.baseEase = 0.055;
+        this.repelStrength = 2.4;
       } else {
-        this.baseSize = Math.random() * 10 + 11;
+        this.baseSize = Math.random() * 10 + 10;
         this.type = "large";
         this.baseAlpha = Math.random() * 0.28 + 0.16;
-        this.maxDisplacement = 15;
-        this.baseEase = 0.045;
+        this.repelStrength = 1.6;
       }
 
       this.size = this.baseSize;
@@ -332,41 +330,41 @@ function initParticleCanvas() {
     }
 
     update() {
-      let targetX = this.originX;
-      let targetY = this.originY;
+      // 1. Continuous smooth ambient floating movement
+      this.x += this.vx;
+      this.y += this.vy;
 
-      // Displacement directly proportional to cursor speed & distance
+      // Seamless screen edge wrap-around
+      if (this.x < -20) this.x = width + 20;
+      else if (this.x > width + 20) this.x = -20;
+      if (this.y < -20) this.y = height + 20;
+      else if (this.y > height + 20) this.y = -20;
+
+      // 2. Cursor avoidance proportional to cursor speed
       if (mouse.x !== null && mouse.y !== null) {
-        const dx = this.originX - mouse.x;
-        const dy = this.originY - mouse.y;
+        const dx = this.x - mouse.x;
+        const dy = this.y - mouse.y;
         const dist = Math.sqrt(dx * dx + dy * dy);
 
         if (dist < mouse.radius && dist > 0.01) {
-          // Smooth cosine curve: 0 at outer boundary, 1 at cursor center
+          // Smooth cosine curve: zero jerk at boundary
           const ratio = dist / mouse.radius;
           const proximity = 0.5 * (1 + Math.cos(ratio * Math.PI));
 
-          // Speed factor: moving cursor slowly = tiny gentle nudge (0.28)
-          // Moving cursor faster = naturally scales with hand motion (up to 1.0)
-          const speedFactor = 0.28 + 0.72 * Math.min(mouse.speed / 12, 1.0);
+          // Scales gently with cursor speed
+          const speedFactor = 0.3 + 0.7 * Math.min(mouse.speed / 12, 1.0);
+          const push = this.repelStrength * proximity * speedFactor;
 
-          // Total deflection is strictly bounded
-          const push = this.maxDisplacement * proximity * speedFactor;
           const dirX = dx / dist;
           const dirY = dy / dist;
 
-          targetX = this.originX + dirX * push;
-          targetY = this.originY + dirY * push;
+          // Gentle deflection
+          this.x += dirX * push;
+          this.y += dirY * push;
         }
       }
 
-      // Adaptive organic easing: matches the pace of cursor movement
-      const currentEase = this.baseEase + Math.min(mouse.speed * 0.003, 0.045);
-
-      this.x += (targetX - this.x) * currentEase;
-      this.y += (targetY - this.y) * currentEase;
-
-      // In-place gentle breathing glow
+      // Gentle in-place breathing glow
       this.pulseStep += this.pulseSpeed;
       const pulseFactor = Math.sin(this.pulseStep) * 0.14 + 1;
       this.size = this.baseSize * pulseFactor;
@@ -403,26 +401,14 @@ function initParticleCanvas() {
     }
   }
 
-  // Populate constant positions across the screen
+  // Populate floating balls across the screen
   for (let i = 0; i < particleCount; i++) {
-    const originX = Math.random() * width;
-    const originY = Math.random() * height;
-    particles.push(new StationaryBall(originX, originY));
+    particles.push(new FloatingBall());
   }
 
   window.addEventListener("resize", () => {
-    const oldW = width;
-    const oldH = height;
     width = canvas.width = window.innerWidth;
     height = canvas.height = window.innerHeight;
-
-    // Rescale constant positions proportionally on window resize
-    particles.forEach((p) => {
-      p.originX = (p.originX / oldW) * width;
-      p.originY = (p.originY / oldH) * height;
-      p.x = p.originX;
-      p.y = p.originY;
-    });
   });
 
   function animate() {
@@ -447,31 +433,9 @@ function initParticleCanvas() {
     mouse.speed *= 0.94;
     if (mouse.speed < 0.05) mouse.speed = 0;
 
-    // Draw constellation connection threads between nearby stationary balls
-    for (let a = 0; a < particles.length; a++) {
-      for (let b = a + 1; b < particles.length; b++) {
-        if (particles[a].type === "large" && particles[b].type === "large") continue;
+    // NOTE: Connecting lines are completely removed for a clean, pure starlit look!
 
-        const dx = particles[a].x - particles[b].x;
-        if (Math.abs(dx) > 80) continue;
-        const dy = particles[a].y - particles[b].y;
-        if (Math.abs(dy) > 80) continue;
-
-        const dist = Math.sqrt(dx * dx + dy * dy);
-
-        if (dist < 80) {
-          const alpha = (1 - dist / 80) * 0.14;
-          ctx.beginPath();
-          ctx.moveTo(particles[a].x, particles[a].y);
-          ctx.lineTo(particles[b].x, particles[b].y);
-          ctx.strokeStyle = `rgba(79, 172, 254, ${alpha})`;
-          ctx.lineWidth = 0.75;
-          ctx.stroke();
-        }
-      }
-    }
-
-    // Update and draw all balls
+    // Update and draw all floating balls
     particles.forEach((p) => {
       p.update();
       p.draw();
