@@ -224,7 +224,7 @@ function initLiveClock() {
 }
 
 // ==========================================
-// 4. INTERACTIVE PARTICLE & GLOWING BALLS CANVAS
+// 4. STATIONARY CONSTANT BALLS WITH CURSOR AVOIDANCE
 // ==========================================
 function initParticleCanvas() {
   const canvas = document.getElementById("particleCanvas");
@@ -234,12 +234,7 @@ function initParticleCanvas() {
   let width = (canvas.width = window.innerWidth);
   let height = (canvas.height = window.innerHeight);
 
-  window.addEventListener("resize", () => {
-    width = canvas.width = window.innerWidth;
-    height = canvas.height = window.innerHeight;
-  });
-
-  const mouse = { x: null, y: null, radius: 160 };
+  const mouse = { x: null, y: null, radius: 155 };
 
   window.addEventListener("mousemove", (e) => {
     mouse.x = e.clientX;
@@ -251,8 +246,8 @@ function initParticleCanvas() {
     mouse.y = null;
   });
 
-  // Significantly increased ball count: 180+ glowing balls
-  const particleCount = Math.min(Math.floor((width * height) / 7500), 190);
+  // Number of constant glowing balls across the screen
+  const particleCount = Math.min(Math.floor((width * height) / 7200), 200);
   const particles = [];
 
   const colorPalettes = [
@@ -264,73 +259,98 @@ function initParticleCanvas() {
     { fill: "rgba(255, 0, 128,", glow: "#ff0080" }      // Cyberpunk Pink Accent
   ];
 
-  class GlowingBall {
-    constructor() {
-      this.reset();
-      this.x = Math.random() * width;
-      this.y = Math.random() * height;
-    }
-
-    reset() {
-      this.x = Math.random() * width;
-      this.y = Math.random() * height;
-      this.vx = (Math.random() - 0.5) * 0.85;
-      this.vy = (Math.random() - 0.5) * 0.85;
+  class StationaryBall {
+    constructor(originX, originY) {
+      // Fixed constant home position
+      this.originX = originX;
+      this.originY = originY;
+      this.x = originX;
+      this.y = originY;
+      this.vx = 0;
+      this.vy = 0;
 
       // Tiered ball sizing:
       // ~60% small micro-balls (2px - 3.5px)
       // ~28% medium glowing energy balls (4px - 8px)
-      // ~12% large slow-drifting cyber orbs (10px - 22px)
+      // ~12% large cyber orbs (11px - 22px)
       const rand = Math.random();
-      if (rand < 0.6) {
-        this.baseSize = Math.random() * 2 + 1.8;
+      if (rand < 0.60) {
+        this.baseSize = Math.random() * 1.8 + 1.8;
         this.type = "small";
         this.baseAlpha = Math.random() * 0.45 + 0.35;
+        this.repelFactor = 8.5;
+        this.springStiffness = 0.075;
+        this.damping = 0.84;
       } else if (rand < 0.88) {
-        this.baseSize = Math.random() * 4 + 4;
+        this.baseSize = Math.random() * 3.5 + 4;
         this.type = "medium";
         this.baseAlpha = Math.random() * 0.4 + 0.3;
+        this.repelFactor = 6.8;
+        this.springStiffness = 0.065;
+        this.damping = 0.85;
       } else {
-        this.baseSize = Math.random() * 12 + 10;
+        this.baseSize = Math.random() * 10 + 11;
         this.type = "large";
         this.baseAlpha = Math.random() * 0.28 + 0.16;
+        this.repelFactor = 4.8;
+        this.springStiffness = 0.055;
+        this.damping = 0.88;
       }
 
       this.size = this.baseSize;
       this.color = colorPalettes[Math.floor(Math.random() * colorPalettes.length)];
-      this.pulseSpeed = Math.random() * 0.03 + 0.015;
+      this.pulseSpeed = Math.random() * 0.025 + 0.01;
       this.pulseStep = Math.random() * Math.PI * 2;
     }
 
     update() {
+      // 1. Cursor Avoidance / Repulsion
+      if (mouse.x !== null && mouse.y !== null) {
+        const dx = this.x - mouse.x;
+        const dy = this.y - mouse.y;
+        const dist = Math.sqrt(dx * dx + dy * dy);
+
+        if (dist < mouse.radius && dist > 0) {
+          const force = (mouse.radius - dist) / mouse.radius; // 0 to 1
+          const dirX = dx / dist;
+          const dirY = dy / dist;
+
+          // Push ball away from cursor
+          this.vx += dirX * force * this.repelFactor;
+          this.vy += dirY * force * this.repelFactor;
+        }
+      }
+
+      // 2. Spring physics: smoothly pull back to its constant home position
+      const homeDx = this.originX - this.x;
+      const homeDy = this.originY - this.y;
+      this.vx += homeDx * this.springStiffness;
+      this.vy += homeDy * this.springStiffness;
+
+      // 3. Friction damping so it comes to a graceful stop
+      this.vx *= this.damping;
+      this.vy *= this.damping;
+
       this.x += this.vx;
       this.y += this.vy;
 
-      // Screen wrap-around
-      if (this.x < -25) this.x = width + 25;
-      else if (this.x > width + 25) this.x = -25;
-      if (this.y < -25) this.y = height + 25;
-      else if (this.y > height + 25) this.y = -25;
-
-      // Gentle pulsating radius
-      this.pulseStep += this.pulseSpeed;
-      const pulseFactor = Math.sin(this.pulseStep) * 0.22 + 1;
-      this.size = this.baseSize * pulseFactor;
-
-      // Interactive mouse avoidance physics
-      if (mouse.x !== null && mouse.y !== null) {
-        const dx = mouse.x - this.x;
-        const dy = mouse.y - this.y;
-        const dist = Math.sqrt(dx * dx + dy * dy);
-        if (dist < mouse.radius) {
-          const force = (mouse.radius - dist) / mouse.radius;
-          const dirX = dx / dist;
-          const dirY = dy / dist;
-          const repulsionMultiplier = this.type === "large" ? 1.4 : 3.2;
-          this.x -= dirX * force * repulsionMultiplier;
-          this.y -= dirY * force * repulsionMultiplier;
-        }
+      // Snap precisely to home if velocity is negligible (zero movement at rest)
+      if (
+        Math.abs(this.vx) < 0.008 &&
+        Math.abs(this.vy) < 0.008 &&
+        Math.abs(homeDx) < 0.04 &&
+        Math.abs(homeDy) < 0.04
+      ) {
+        this.x = this.originX;
+        this.y = this.originY;
+        this.vx = 0;
+        this.vy = 0;
       }
+
+      // Subtle breathing glow in-place
+      this.pulseStep += this.pulseSpeed;
+      const pulseFactor = Math.sin(this.pulseStep) * 0.18 + 1;
+      this.size = this.baseSize * pulseFactor;
     }
 
     draw() {
@@ -339,7 +359,6 @@ function initParticleCanvas() {
       ctx.arc(this.x, this.y, Math.max(0.5, this.size), 0, Math.PI * 2);
 
       if (this.type === "large") {
-        // Radial gradient for large ambient orbs
         const grad = ctx.createRadialGradient(
           this.x,
           this.y,
@@ -365,14 +384,34 @@ function initParticleCanvas() {
     }
   }
 
+  // Populate constant positions across the screen
   for (let i = 0; i < particleCount; i++) {
-    particles.push(new GlowingBall());
+    const originX = Math.random() * width;
+    const originY = Math.random() * height;
+    particles.push(new StationaryBall(originX, originY));
   }
+
+  window.addEventListener("resize", () => {
+    const oldW = width;
+    const oldH = height;
+    width = canvas.width = window.innerWidth;
+    height = canvas.height = window.innerHeight;
+
+    // Rescale constant positions proportionally on window resize
+    particles.forEach((p) => {
+      p.originX = (p.originX / oldW) * width;
+      p.originY = (p.originY / oldH) * height;
+      p.x = p.originX;
+      p.y = p.originY;
+      p.vx = 0;
+      p.vy = 0;
+    });
+  });
 
   function animate() {
     ctx.clearRect(0, 0, width, height);
 
-    // Draw constellation connection filaments between nearby balls
+    // Draw constellation connection threads between nearby stationary balls
     for (let a = 0; a < particles.length; a++) {
       for (let b = a + 1; b < particles.length; b++) {
         if (particles[a].type === "large" && particles[b].type === "large") continue;
