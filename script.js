@@ -224,7 +224,7 @@ function initLiveClock() {
 }
 
 // ==========================================
-// 4. STATIONARY CONSTANT BALLS WITH CURSOR AVOIDANCE
+// 4. ULTRA-SMOOTH STATIONARY BALLS WITH FLUID AVOIDANCE
 // ==========================================
 function initParticleCanvas() {
   const canvas = document.getElementById("particleCanvas");
@@ -234,16 +234,27 @@ function initParticleCanvas() {
   let width = (canvas.width = window.innerWidth);
   let height = (canvas.height = window.innerHeight);
 
-  const mouse = { x: null, y: null, radius: 155 };
+  // Eased mouse follower for buttery-smooth fluid interaction
+  const mouse = {
+    x: null,
+    y: null,
+    targetX: null,
+    targetY: null,
+    radius: 175
+  };
 
   window.addEventListener("mousemove", (e) => {
-    mouse.x = e.clientX;
-    mouse.y = e.clientY;
+    mouse.targetX = e.clientX;
+    mouse.targetY = e.clientY;
+    if (mouse.x === null || mouse.y === null) {
+      mouse.x = e.clientX;
+      mouse.y = e.clientY;
+    }
   });
 
   window.addEventListener("mouseout", () => {
-    mouse.x = null;
-    mouse.y = null;
+    mouse.targetX = null;
+    mouse.targetY = null;
   });
 
   // Number of constant glowing balls across the screen
@@ -278,68 +289,81 @@ function initParticleCanvas() {
         this.baseSize = Math.random() * 1.8 + 1.8;
         this.type = "small";
         this.baseAlpha = Math.random() * 0.45 + 0.35;
-        this.repelFactor = 8.5;
-        this.springStiffness = 0.075;
-        this.damping = 0.84;
+        this.repelFactor = 2.8;
+        this.maxSpeed = 4.5;
+        this.springStiffness = 0.042;
+        this.damping = 0.91;
       } else if (rand < 0.88) {
         this.baseSize = Math.random() * 3.5 + 4;
         this.type = "medium";
         this.baseAlpha = Math.random() * 0.4 + 0.3;
-        this.repelFactor = 6.8;
-        this.springStiffness = 0.065;
-        this.damping = 0.85;
+        this.repelFactor = 2.2;
+        this.maxSpeed = 3.6;
+        this.springStiffness = 0.038;
+        this.damping = 0.915;
       } else {
         this.baseSize = Math.random() * 10 + 11;
         this.type = "large";
         this.baseAlpha = Math.random() * 0.28 + 0.16;
-        this.repelFactor = 4.8;
-        this.springStiffness = 0.055;
-        this.damping = 0.88;
+        this.repelFactor = 1.6;
+        this.maxSpeed = 2.8;
+        this.springStiffness = 0.032;
+        this.damping = 0.92;
       }
 
       this.size = this.baseSize;
       this.color = colorPalettes[Math.floor(Math.random() * colorPalettes.length)];
-      this.pulseSpeed = Math.random() * 0.025 + 0.01;
+      this.pulseSpeed = Math.random() * 0.02 + 0.008;
       this.pulseStep = Math.random() * Math.PI * 2;
     }
 
     update() {
-      // 1. Cursor Avoidance / Repulsion
+      // 1. Silky Smooth Cosine Avoidance Physics
       if (mouse.x !== null && mouse.y !== null) {
         const dx = this.x - mouse.x;
         const dy = this.y - mouse.y;
         const dist = Math.sqrt(dx * dx + dy * dy);
 
-        if (dist < mouse.radius && dist > 0) {
-          const force = (mouse.radius - dist) / mouse.radius; // 0 to 1
+        if (dist < mouse.radius && dist > 0.01) {
+          // Cosine smoothstep curve: zero jerk at boundary, continuous gradual ramp
+          const ratio = dist / mouse.radius; // 0 to 1
+          const smoothForce = 0.5 * (1 + Math.cos(ratio * Math.PI)); // 1 at center, 0 at edge
+
           const dirX = dx / dist;
           const dirY = dy / dist;
 
-          // Push ball away from cursor
-          this.vx += dirX * force * this.repelFactor;
-          this.vy += dirY * force * this.repelFactor;
+          // Gentle, organic outward push
+          this.vx += dirX * smoothForce * this.repelFactor;
+          this.vy += dirY * smoothForce * this.repelFactor;
         }
       }
 
-      // 2. Spring physics: smoothly pull back to its constant home position
+      // 2. Soft Elastic Spring Return to Home Position
       const homeDx = this.originX - this.x;
       const homeDy = this.originY - this.y;
       this.vx += homeDx * this.springStiffness;
       this.vy += homeDy * this.springStiffness;
 
-      // 3. Friction damping so it comes to a graceful stop
+      // 3. Velocity Cap to Prevent Any Sudden Teleporting
+      const speed = Math.hypot(this.vx, this.vy);
+      if (speed > this.maxSpeed) {
+        this.vx = (this.vx / speed) * this.maxSpeed;
+        this.vy = (this.vy / speed) * this.maxSpeed;
+      }
+
+      // 4. Fluid Viscous Damping (velvety deceleration)
       this.vx *= this.damping;
       this.vy *= this.damping;
 
       this.x += this.vx;
       this.y += this.vy;
 
-      // Snap precisely to home if velocity is negligible (zero movement at rest)
+      // Snap precisely to resting place when momentum settles (zero movement at rest)
       if (
-        Math.abs(this.vx) < 0.008 &&
-        Math.abs(this.vy) < 0.008 &&
-        Math.abs(homeDx) < 0.04 &&
-        Math.abs(homeDy) < 0.04
+        Math.abs(this.vx) < 0.005 &&
+        Math.abs(this.vy) < 0.005 &&
+        Math.abs(homeDx) < 0.03 &&
+        Math.abs(homeDy) < 0.03
       ) {
         this.x = this.originX;
         this.y = this.originY;
@@ -347,9 +371,9 @@ function initParticleCanvas() {
         this.vy = 0;
       }
 
-      // Subtle breathing glow in-place
+      // Gentle in-place breathing glow
       this.pulseStep += this.pulseSpeed;
-      const pulseFactor = Math.sin(this.pulseStep) * 0.18 + 1;
+      const pulseFactor = Math.sin(this.pulseStep) * 0.15 + 1;
       this.size = this.baseSize * pulseFactor;
     }
 
@@ -410,6 +434,20 @@ function initParticleCanvas() {
 
   function animate() {
     ctx.clearRect(0, 0, width, height);
+
+    // Smoothly interpolate cursor follower to eliminate discrete mouse-event jumps
+    if (mouse.targetX !== null && mouse.targetY !== null) {
+      if (mouse.x === null) {
+        mouse.x = mouse.targetX;
+        mouse.y = mouse.targetY;
+      } else {
+        mouse.x += (mouse.targetX - mouse.x) * 0.22;
+        mouse.y += (mouse.targetY - mouse.y) * 0.22;
+      }
+    } else {
+      mouse.x = null;
+      mouse.y = null;
+    }
 
     // Draw constellation connection threads between nearby stationary balls
     for (let a = 0; a < particles.length; a++) {
