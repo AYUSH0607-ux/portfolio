@@ -224,7 +224,7 @@ function initLiveClock() {
 }
 
 // ==========================================
-// 4. ULTRA-SMOOTH STATIONARY BALLS WITH FLUID AVOIDANCE
+// 4. SPEED-SYNCHRONIZED STATIONARY BALLS CANVAS
 // ==========================================
 function initParticleCanvas() {
   const canvas = document.getElementById("particleCanvas");
@@ -234,27 +234,49 @@ function initParticleCanvas() {
   let width = (canvas.width = window.innerWidth);
   let height = (canvas.height = window.innerHeight);
 
-  // Eased mouse follower for buttery-smooth fluid interaction
+  // Real-time cursor tracker with speed detection and smoothing
   const mouse = {
     x: null,
     y: null,
     targetX: null,
     targetY: null,
-    radius: 175
+    speed: 0,
+    lastTime: performance.now(),
+    radius: 150
   };
 
+  let mouseSpeedTimeout;
+
   window.addEventListener("mousemove", (e) => {
+    const now = performance.now();
+    const dt = Math.max(1, now - mouse.lastTime);
     mouse.targetX = e.clientX;
     mouse.targetY = e.clientY;
+
     if (mouse.x === null || mouse.y === null) {
       mouse.x = e.clientX;
       mouse.y = e.clientY;
+      mouse.speed = 0;
+    } else {
+      const dx = e.clientX - mouse.x;
+      const dy = e.clientY - mouse.y;
+      const instSpeed = Math.sqrt(dx * dx + dy * dy) / (dt / 16.67);
+      // Smooth filter for cursor speed
+      mouse.speed = mouse.speed * 0.5 + Math.min(instSpeed, 18) * 0.5;
     }
+
+    mouse.lastTime = now;
+
+    clearTimeout(mouseSpeedTimeout);
+    mouseSpeedTimeout = setTimeout(() => {
+      mouse.speed = 0;
+    }, 60);
   });
 
   window.addEventListener("mouseout", () => {
     mouse.targetX = null;
     mouse.targetY = null;
+    mouse.speed = 0;
   });
 
   // Number of constant glowing balls across the screen
@@ -272,13 +294,11 @@ function initParticleCanvas() {
 
   class StationaryBall {
     constructor(originX, originY) {
-      // Fixed constant home position
+      // Anchored constant home position
       this.originX = originX;
       this.originY = originY;
       this.x = originX;
       this.y = originY;
-      this.vx = 0;
-      this.vy = 0;
 
       // Tiered ball sizing:
       // ~60% small micro-balls (2px - 3.5px)
@@ -289,26 +309,20 @@ function initParticleCanvas() {
         this.baseSize = Math.random() * 1.8 + 1.8;
         this.type = "small";
         this.baseAlpha = Math.random() * 0.45 + 0.35;
-        this.repelFactor = 2.8;
-        this.maxSpeed = 4.5;
-        this.springStiffness = 0.042;
-        this.damping = 0.91;
+        this.maxDisplacement = 34; // Max deflection in pixels (never flies off)
+        this.baseEase = 0.065;
       } else if (rand < 0.88) {
         this.baseSize = Math.random() * 3.5 + 4;
         this.type = "medium";
         this.baseAlpha = Math.random() * 0.4 + 0.3;
-        this.repelFactor = 2.2;
-        this.maxSpeed = 3.6;
-        this.springStiffness = 0.038;
-        this.damping = 0.915;
+        this.maxDisplacement = 24;
+        this.baseEase = 0.055;
       } else {
         this.baseSize = Math.random() * 10 + 11;
         this.type = "large";
         this.baseAlpha = Math.random() * 0.28 + 0.16;
-        this.repelFactor = 1.6;
-        this.maxSpeed = 2.8;
-        this.springStiffness = 0.032;
-        this.damping = 0.92;
+        this.maxDisplacement = 15;
+        this.baseEase = 0.045;
       }
 
       this.size = this.baseSize;
@@ -318,62 +332,43 @@ function initParticleCanvas() {
     }
 
     update() {
-      // 1. Silky Smooth Cosine Avoidance Physics
+      let targetX = this.originX;
+      let targetY = this.originY;
+
+      // Displacement directly proportional to cursor speed & distance
       if (mouse.x !== null && mouse.y !== null) {
-        const dx = this.x - mouse.x;
-        const dy = this.y - mouse.y;
+        const dx = this.originX - mouse.x;
+        const dy = this.originY - mouse.y;
         const dist = Math.sqrt(dx * dx + dy * dy);
 
         if (dist < mouse.radius && dist > 0.01) {
-          // Cosine smoothstep curve: zero jerk at boundary, continuous gradual ramp
-          const ratio = dist / mouse.radius; // 0 to 1
-          const smoothForce = 0.5 * (1 + Math.cos(ratio * Math.PI)); // 1 at center, 0 at edge
+          // Smooth cosine curve: 0 at outer boundary, 1 at cursor center
+          const ratio = dist / mouse.radius;
+          const proximity = 0.5 * (1 + Math.cos(ratio * Math.PI));
 
+          // Speed factor: moving cursor slowly = tiny gentle nudge (0.28)
+          // Moving cursor faster = naturally scales with hand motion (up to 1.0)
+          const speedFactor = 0.28 + 0.72 * Math.min(mouse.speed / 12, 1.0);
+
+          // Total deflection is strictly bounded
+          const push = this.maxDisplacement * proximity * speedFactor;
           const dirX = dx / dist;
           const dirY = dy / dist;
 
-          // Gentle, organic outward push
-          this.vx += dirX * smoothForce * this.repelFactor;
-          this.vy += dirY * smoothForce * this.repelFactor;
+          targetX = this.originX + dirX * push;
+          targetY = this.originY + dirY * push;
         }
       }
 
-      // 2. Soft Elastic Spring Return to Home Position
-      const homeDx = this.originX - this.x;
-      const homeDy = this.originY - this.y;
-      this.vx += homeDx * this.springStiffness;
-      this.vy += homeDy * this.springStiffness;
+      // Adaptive organic easing: matches the pace of cursor movement
+      const currentEase = this.baseEase + Math.min(mouse.speed * 0.003, 0.045);
 
-      // 3. Velocity Cap to Prevent Any Sudden Teleporting
-      const speed = Math.hypot(this.vx, this.vy);
-      if (speed > this.maxSpeed) {
-        this.vx = (this.vx / speed) * this.maxSpeed;
-        this.vy = (this.vy / speed) * this.maxSpeed;
-      }
+      this.x += (targetX - this.x) * currentEase;
+      this.y += (targetY - this.y) * currentEase;
 
-      // 4. Fluid Viscous Damping (velvety deceleration)
-      this.vx *= this.damping;
-      this.vy *= this.damping;
-
-      this.x += this.vx;
-      this.y += this.vy;
-
-      // Snap precisely to resting place when momentum settles (zero movement at rest)
-      if (
-        Math.abs(this.vx) < 0.005 &&
-        Math.abs(this.vy) < 0.005 &&
-        Math.abs(homeDx) < 0.03 &&
-        Math.abs(homeDy) < 0.03
-      ) {
-        this.x = this.originX;
-        this.y = this.originY;
-        this.vx = 0;
-        this.vy = 0;
-      }
-
-      // Gentle in-place breathing glow
+      // In-place gentle breathing glow
       this.pulseStep += this.pulseSpeed;
-      const pulseFactor = Math.sin(this.pulseStep) * 0.15 + 1;
+      const pulseFactor = Math.sin(this.pulseStep) * 0.14 + 1;
       this.size = this.baseSize * pulseFactor;
     }
 
@@ -427,8 +422,6 @@ function initParticleCanvas() {
       p.originY = (p.originY / oldH) * height;
       p.x = p.originX;
       p.y = p.originY;
-      p.vx = 0;
-      p.vy = 0;
     });
   });
 
@@ -441,13 +434,18 @@ function initParticleCanvas() {
         mouse.x = mouse.targetX;
         mouse.y = mouse.targetY;
       } else {
-        mouse.x += (mouse.targetX - mouse.x) * 0.22;
-        mouse.y += (mouse.targetY - mouse.y) * 0.22;
+        mouse.x += (mouse.targetX - mouse.x) * 0.25;
+        mouse.y += (mouse.targetY - mouse.y) * 0.25;
       }
     } else {
       mouse.x = null;
       mouse.y = null;
+      mouse.speed = 0;
     }
+
+    // Decay speed smoothly when idle
+    mouse.speed *= 0.94;
+    if (mouse.speed < 0.05) mouse.speed = 0;
 
     // Draw constellation connection threads between nearby stationary balls
     for (let a = 0; a < particles.length; a++) {
