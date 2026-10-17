@@ -1699,6 +1699,20 @@ a.method-value:hover {
   color: #6ee7b7;
 }
 
+.form-status-message.error {
+  display: block;
+  background: rgba(239, 68, 68, 0.12);
+  border: 1px solid rgba(239, 68, 68, 0.3);
+  color: #fca5a5;
+}
+
+.form-status-message.info {
+  display: block;
+  background: rgba(0, 242, 254, 0.12);
+  border: 1px solid rgba(0, 242, 254, 0.3);
+  color: #67e8f9;
+}
+
 /* --- 13. MODALS & DIALOGS --- */
 .modal-backdrop {
   position: fixed;

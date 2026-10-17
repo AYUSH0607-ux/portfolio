@@ -808,6 +808,8 @@ function initClipboardCopy() {
 // ==========================================
 // 11. CONTACT FORM TRANSMISSION ENGINE
 // ==========================================
+// 11. LIVE CONTACT FORM TRANSMISSION ENGINE
+// ==========================================
 function initContactForm() {
   const form = document.getElementById("contactForm");
   const submitBtn = document.getElementById("submitBtn");
@@ -832,21 +834,62 @@ function initContactForm() {
     const originalText = submitBtn.querySelector(".btn-text").textContent;
     submitBtn.querySelector(".btn-text").textContent = "Transmitting to Ayush...";
 
-    setTimeout(() => {
-      submitBtn.disabled = false;
-      submitBtn.querySelector(".btn-text").textContent = originalText;
-      form.reset();
+    // Live AJAX dispatch directly to Ayush's email via FormSubmit
+    fetch("https://formsubmit.co/ajax/namballaayus@gmail.com", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        "Accept": "application/json"
+      },
+      body: JSON.stringify({
+        name: name,
+        email: email,
+        _subject: `[Portfolio Transmission] ${subject} — from ${name}`,
+        message: message,
+        _template: "table",
+        _captcha: "false"
+      })
+    })
+      .then((res) => {
+        if (!res.ok) throw new Error(`HTTP error! status: ${res.status}`);
+        return res.json();
+      })
+      .then((data) => {
+        submitBtn.disabled = false;
+        submitBtn.querySelector(".btn-text").textContent = originalText;
+        form.reset();
 
-      if (statusMsg) {
-        statusMsg.className = "form-status-message success";
-        statusMsg.textContent = `Transmission confirmed! Thank you, ${name}. Ayush will respond to ${email} soon.`;
-        setTimeout(() => {
-          statusMsg.style.display = "none";
-        }, 6000);
-      }
+        if (statusMsg) {
+          statusMsg.className = "form-status-message success";
+          statusMsg.textContent = `Transmission delivered! Message forwarded to Ayush's inbox (namballaayus@gmail.com). Ayush will respond to ${email} soon.`;
+          statusMsg.style.display = "block";
+          setTimeout(() => {
+            statusMsg.style.display = "none";
+          }, 8000);
+        }
 
-      showToast(`Transmission sent to Ayush Namballa!`, "success");
-    }, 1200);
+        showToast("Message successfully delivered to Ayush!", "success");
+      })
+      .catch((err) => {
+        console.warn("Contact transmission warning:", err);
+        submitBtn.disabled = false;
+        submitBtn.querySelector(".btn-text").textContent = originalText;
+
+        // Graceful resilient fallback: direct mailto trigger link
+        const mailtoUrl = `mailto:namballaayus@gmail.com?subject=${encodeURIComponent(
+          subject
+        )}&body=${encodeURIComponent(
+          `From: ${name} (${email})\n\n${message}`
+        )}`;
+
+        if (statusMsg) {
+          statusMsg.className = "form-status-message info";
+          statusMsg.innerHTML = `Offline / Network filter detected. <a href="${mailtoUrl}" style="color: var(--accent-cyan); text-decoration: underline; font-weight: 600;">Click here to send directly via your email client</a>.`;
+          statusMsg.style.display = "block";
+        }
+
+        showToast("Fallback link ready. Click status link to email.", "info");
+      });
   });
 }
 
