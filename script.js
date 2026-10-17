@@ -279,8 +279,8 @@ function initParticleCanvas() {
     mouse.speed = 0;
   });
 
-  // Number of constant glowing balls across the screen
-  const particleCount = Math.min(Math.floor((width * height) / 7200), 200);
+  // High-density cosmic field: 360+ constant glowing balls across the screen
+  const particleCount = Math.min(Math.floor((width * height) / 3800), 360);
   const particles = [];
 
   const colorPalettes = [
@@ -453,16 +453,19 @@ function initParticleCanvas() {
         if (particles[a].type === "large" && particles[b].type === "large") continue;
 
         const dx = particles[a].x - particles[b].x;
+        if (Math.abs(dx) > 80) continue;
         const dy = particles[a].y - particles[b].y;
+        if (Math.abs(dy) > 80) continue;
+
         const dist = Math.sqrt(dx * dx + dy * dy);
 
-        if (dist < 105) {
-          const alpha = (1 - dist / 105) * 0.16;
+        if (dist < 80) {
+          const alpha = (1 - dist / 80) * 0.14;
           ctx.beginPath();
           ctx.moveTo(particles[a].x, particles[a].y);
           ctx.lineTo(particles[b].x, particles[b].y);
           ctx.strokeStyle = `rgba(79, 172, 254, ${alpha})`;
-          ctx.lineWidth = 0.85;
+          ctx.lineWidth = 0.75;
           ctx.stroke();
         }
       }
