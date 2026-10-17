@@ -224,7 +224,7 @@ function initLiveClock() {
 }
 
 // ==========================================
-// 4. INTERACTIVE PARTICLE CONSTELLATION CANVAS
+// 4. INTERACTIVE PARTICLE & GLOWING BALLS CANVAS
 // ==========================================
 function initParticleCanvas() {
   const canvas = document.getElementById("particleCanvas");
@@ -239,7 +239,7 @@ function initParticleCanvas() {
     height = canvas.height = window.innerHeight;
   });
 
-  const mouse = { x: null, y: null, radius: 140 };
+  const mouse = { x: null, y: null, radius: 160 };
 
   window.addEventListener("mousemove", (e) => {
     mouse.x = e.clientX;
@@ -251,27 +251,73 @@ function initParticleCanvas() {
     mouse.y = null;
   });
 
-  const particleCount = Math.min(Math.floor((width * height) / 16000), 75);
+  // Significantly increased ball count: 180+ glowing balls
+  const particleCount = Math.min(Math.floor((width * height) / 7500), 190);
   const particles = [];
 
-  class Particle {
+  const colorPalettes = [
+    { fill: "rgba(0, 242, 254,", glow: "#00f2fe" },    // Neon Cyan
+    { fill: "rgba(79, 172, 254,", glow: "#4facfe" },    // Electric Blue
+    { fill: "rgba(147, 51, 234,", glow: "#9333ea" },    // Electric Purple
+    { fill: "rgba(121, 40, 202,", glow: "#7928ca" },    // Deep Violet
+    { fill: "rgba(16, 185, 129,", glow: "#10b981" },    // Emerald Sparkle
+    { fill: "rgba(255, 0, 128,", glow: "#ff0080" }      // Cyberpunk Pink Accent
+  ];
+
+  class GlowingBall {
     constructor() {
+      this.reset();
       this.x = Math.random() * width;
       this.y = Math.random() * height;
-      this.vx = (Math.random() - 0.5) * 0.7;
-      this.vy = (Math.random() - 0.5) * 0.7;
-      this.size = Math.random() * 2 + 1;
-      this.baseAlpha = Math.random() * 0.5 + 0.2;
+    }
+
+    reset() {
+      this.x = Math.random() * width;
+      this.y = Math.random() * height;
+      this.vx = (Math.random() - 0.5) * 0.85;
+      this.vy = (Math.random() - 0.5) * 0.85;
+
+      // Tiered ball sizing:
+      // ~60% small micro-balls (2px - 3.5px)
+      // ~28% medium glowing energy balls (4px - 8px)
+      // ~12% large slow-drifting cyber orbs (10px - 22px)
+      const rand = Math.random();
+      if (rand < 0.6) {
+        this.baseSize = Math.random() * 2 + 1.8;
+        this.type = "small";
+        this.baseAlpha = Math.random() * 0.45 + 0.35;
+      } else if (rand < 0.88) {
+        this.baseSize = Math.random() * 4 + 4;
+        this.type = "medium";
+        this.baseAlpha = Math.random() * 0.4 + 0.3;
+      } else {
+        this.baseSize = Math.random() * 12 + 10;
+        this.type = "large";
+        this.baseAlpha = Math.random() * 0.28 + 0.16;
+      }
+
+      this.size = this.baseSize;
+      this.color = colorPalettes[Math.floor(Math.random() * colorPalettes.length)];
+      this.pulseSpeed = Math.random() * 0.03 + 0.015;
+      this.pulseStep = Math.random() * Math.PI * 2;
     }
 
     update() {
       this.x += this.vx;
       this.y += this.vy;
 
-      if (this.x < 0 || this.x > width) this.vx *= -1;
-      if (this.y < 0 || this.y > height) this.vy *= -1;
+      // Screen wrap-around
+      if (this.x < -25) this.x = width + 25;
+      else if (this.x > width + 25) this.x = -25;
+      if (this.y < -25) this.y = height + 25;
+      else if (this.y > height + 25) this.y = -25;
 
-      // Mouse interactivity
+      // Gentle pulsating radius
+      this.pulseStep += this.pulseSpeed;
+      const pulseFactor = Math.sin(this.pulseStep) * 0.22 + 1;
+      this.size = this.baseSize * pulseFactor;
+
+      // Interactive mouse avoidance physics
       if (mouse.x !== null && mouse.y !== null) {
         const dx = mouse.x - this.x;
         const dy = mouse.y - this.y;
@@ -280,47 +326,74 @@ function initParticleCanvas() {
           const force = (mouse.radius - dist) / mouse.radius;
           const dirX = dx / dist;
           const dirY = dy / dist;
-          this.x -= dirX * force * 2.5;
-          this.y -= dirY * force * 2.5;
+          const repulsionMultiplier = this.type === "large" ? 1.4 : 3.2;
+          this.x -= dirX * force * repulsionMultiplier;
+          this.y -= dirY * force * repulsionMultiplier;
         }
       }
     }
 
     draw() {
+      ctx.save();
       ctx.beginPath();
-      ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
-      ctx.fillStyle = `rgba(0, 242, 254, ${this.baseAlpha})`;
-      ctx.shadowBlur = 10;
-      ctx.shadowColor = "#00f2fe";
+      ctx.arc(this.x, this.y, Math.max(0.5, this.size), 0, Math.PI * 2);
+
+      if (this.type === "large") {
+        // Radial gradient for large ambient orbs
+        const grad = ctx.createRadialGradient(
+          this.x,
+          this.y,
+          0,
+          this.x,
+          this.y,
+          this.size
+        );
+        grad.addColorStop(0, `${this.color.fill} ${this.baseAlpha * 1.5})`);
+        grad.addColorStop(0.5, `${this.color.fill} ${this.baseAlpha * 0.7})`);
+        grad.addColorStop(1, `${this.color.fill} 0)`);
+        ctx.fillStyle = grad;
+        ctx.shadowBlur = 20;
+        ctx.shadowColor = this.color.glow;
+      } else {
+        ctx.fillStyle = `${this.color.fill} ${this.baseAlpha})`;
+        ctx.shadowBlur = this.type === "medium" ? 14 : 8;
+        ctx.shadowColor = this.color.glow;
+      }
+
       ctx.fill();
+      ctx.restore();
     }
   }
 
   for (let i = 0; i < particleCount; i++) {
-    particles.push(new Particle());
+    particles.push(new GlowingBall());
   }
 
   function animate() {
     ctx.clearRect(0, 0, width, height);
 
+    // Draw constellation connection filaments between nearby balls
     for (let a = 0; a < particles.length; a++) {
       for (let b = a + 1; b < particles.length; b++) {
+        if (particles[a].type === "large" && particles[b].type === "large") continue;
+
         const dx = particles[a].x - particles[b].x;
         const dy = particles[a].y - particles[b].y;
         const dist = Math.sqrt(dx * dx + dy * dy);
 
-        if (dist < 120) {
-          const alpha = (1 - dist / 120) * 0.18;
+        if (dist < 105) {
+          const alpha = (1 - dist / 105) * 0.16;
           ctx.beginPath();
           ctx.moveTo(particles[a].x, particles[a].y);
           ctx.lineTo(particles[b].x, particles[b].y);
           ctx.strokeStyle = `rgba(79, 172, 254, ${alpha})`;
-          ctx.lineWidth = 1;
+          ctx.lineWidth = 0.85;
           ctx.stroke();
         }
       }
     }
 
+    // Update and draw all balls
     particles.forEach((p) => {
       p.update();
       p.draw();
