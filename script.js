@@ -536,7 +536,7 @@ function initStatsCounters() {
 }
 
 // ==========================================
-// 7. SKILLS FILTERING (WITH SMOOTH SLIDING GLIDER)
+// 7. SKILLS FILTERING (SMOOTH GLIDING BLUE LIGHT)
 // ==========================================
 function initSkillsFilter() {
   const tabsContainer = document.querySelector(".filter-tabs");
@@ -544,10 +544,10 @@ function initSkillsFilter() {
   const skillCards = document.querySelectorAll(".skill-card");
   let glider = document.getElementById("filterTabGlider");
 
-  if (!filterTabs.length) return;
+  if (!filterTabs.length || !tabsContainer) return;
 
-  // Create glider element dynamically if missing
-  if (!glider && tabsContainer) {
+  // Ensure glider element exists
+  if (!glider) {
     glider = document.createElement("div");
     glider.className = "filter-tab-glider";
     glider.id = "filterTabGlider";
@@ -555,66 +555,57 @@ function initSkillsFilter() {
     tabsContainer.prepend(glider);
   }
 
-  // Smoothly reposition the blue glowing glider pill
-  function positionGlider(activeTab, animate = true) {
-    if (!glider || !activeTab) return;
+  // Move the blue glowing glider directly to the target tab
+  function moveGliderToTab(tab) {
+    if (!glider || !tab) return;
+    const left = tab.offsetLeft;
+    const width = tab.offsetWidth;
 
-    if (!animate) {
-      glider.style.transition = "none";
-    } else {
-      glider.style.transition =
-        "transform 0.42s cubic-bezier(0.25, 1.25, 0.35, 1), width 0.38s cubic-bezier(0.25, 1.25, 0.35, 1), height 0.35s ease, opacity 0.25s ease";
-    }
-
-    const left = activeTab.offsetLeft;
-    const top = activeTab.offsetTop;
-    const width = activeTab.offsetWidth;
-    const height = activeTab.offsetHeight;
-
-    glider.style.transform = `translate3d(${left}px, ${top}px, 0)`;
+    glider.style.transform = `translate3d(${left}px, 0, 0)`;
     glider.style.width = `${width}px`;
-    glider.style.height = `${height}px`;
-    glider.style.opacity = "1";
-
-    if (!animate) {
-      // Force layout reflow so transition turns back on cleanly
-      void glider.offsetHeight;
-      glider.style.transition = "";
-    }
   }
 
-  // Set initial position without animation
+  // Initial positioning: immediately match active tab without initial flash
   const initialActive = document.querySelector(".filter-tab.active") || filterTabs[0];
   if (initialActive) {
-    positionGlider(initialActive, false);
-    // Double-check alignment once layout and custom webfonts settle
-    requestAnimationFrame(() => positionGlider(initialActive, false));
-    setTimeout(() => positionGlider(initialActive, false), 150);
+    moveGliderToTab(initialActive);
+    glider.style.opacity = "1";
+
+    // Enable smooth CSS slide animation after initial paint
+    setTimeout(() => {
+      moveGliderToTab(initialActive);
+      glider.classList.add("glider-animated");
+    }, 60);
+
     if (document.fonts && document.fonts.ready) {
-      document.fonts.ready.then(() => positionGlider(initialActive, false));
+      document.fonts.ready.then(() => {
+        const currentActive = document.querySelector(".filter-tab.active");
+        if (currentActive) moveGliderToTab(currentActive);
+      });
     }
   }
 
   filterTabs.forEach((tab) => {
-    tab.addEventListener("click", () => {
+    tab.addEventListener("click", (e) => {
+      e.preventDefault();
       if (tab.classList.contains("active")) return;
 
       filterTabs.forEach((t) => t.classList.remove("active"));
       tab.classList.add("active");
 
-      // Smoothly slide the blue indicator to the clicked tab
-      positionGlider(tab, true);
+      // Smoothly slide the blue light over to the clicked tab!
+      moveGliderToTab(tab);
 
+      // Filter skill cards
       const filter = tab.getAttribute("data-filter");
-
       skillCards.forEach((card) => {
         const category = card.getAttribute("data-category");
         if (filter === "all" || category === filter) {
           card.classList.remove("hidden");
           card.style.opacity = "0";
-          card.style.transform = "translateY(10px)";
+          card.style.transform = "translateY(8px)";
           setTimeout(() => {
-            card.style.transition = "all 0.3s ease";
+            card.style.transition = "opacity 0.3s ease, transform 0.3s ease";
             card.style.opacity = "1";
             card.style.transform = "translateY(0)";
           }, 30);
@@ -625,19 +616,15 @@ function initSkillsFilter() {
     });
   });
 
-  // Keep glider perfectly aligned on resize
+  // Re-align on window resize only (debounced so it never cancels tab clicks)
+  let resizeTimer;
   window.addEventListener("resize", () => {
-    const currentActive = document.querySelector(".filter-tab.active");
-    if (currentActive) positionGlider(currentActive, false);
-  });
-
-  if (window.ResizeObserver && tabsContainer) {
-    const ro = new ResizeObserver(() => {
+    clearTimeout(resizeTimer);
+    resizeTimer = setTimeout(() => {
       const currentActive = document.querySelector(".filter-tab.active");
-      if (currentActive) positionGlider(currentActive, false);
-    });
-    ro.observe(tabsContainer);
-  }
+      if (currentActive) moveGliderToTab(currentActive);
+    }, 100);
+  });
 }
 
 // ==========================================
