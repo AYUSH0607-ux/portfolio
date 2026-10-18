@@ -536,16 +536,74 @@ function initStatsCounters() {
 }
 
 // ==========================================
-// 7. SKILLS FILTERING
+// 7. SKILLS FILTERING (WITH SMOOTH SLIDING GLIDER)
 // ==========================================
 function initSkillsFilter() {
+  const tabsContainer = document.querySelector(".filter-tabs");
   const filterTabs = document.querySelectorAll(".filter-tab");
   const skillCards = document.querySelectorAll(".skill-card");
+  let glider = document.getElementById("filterTabGlider");
+
+  if (!filterTabs.length) return;
+
+  // Create glider element dynamically if missing
+  if (!glider && tabsContainer) {
+    glider = document.createElement("div");
+    glider.className = "filter-tab-glider";
+    glider.id = "filterTabGlider";
+    glider.setAttribute("aria-hidden", "true");
+    tabsContainer.prepend(glider);
+  }
+
+  // Smoothly reposition the blue glowing glider pill
+  function positionGlider(activeTab, animate = true) {
+    if (!glider || !activeTab) return;
+
+    if (!animate) {
+      glider.style.transition = "none";
+    } else {
+      glider.style.transition =
+        "transform 0.42s cubic-bezier(0.25, 1.25, 0.35, 1), width 0.38s cubic-bezier(0.25, 1.25, 0.35, 1), height 0.35s ease, opacity 0.25s ease";
+    }
+
+    const left = activeTab.offsetLeft;
+    const top = activeTab.offsetTop;
+    const width = activeTab.offsetWidth;
+    const height = activeTab.offsetHeight;
+
+    glider.style.transform = `translate3d(${left}px, ${top}px, 0)`;
+    glider.style.width = `${width}px`;
+    glider.style.height = `${height}px`;
+    glider.style.opacity = "1";
+
+    if (!animate) {
+      // Force layout reflow so transition turns back on cleanly
+      void glider.offsetHeight;
+      glider.style.transition = "";
+    }
+  }
+
+  // Set initial position without animation
+  const initialActive = document.querySelector(".filter-tab.active") || filterTabs[0];
+  if (initialActive) {
+    positionGlider(initialActive, false);
+    // Double-check alignment once layout and custom webfonts settle
+    requestAnimationFrame(() => positionGlider(initialActive, false));
+    setTimeout(() => positionGlider(initialActive, false), 150);
+    if (document.fonts && document.fonts.ready) {
+      document.fonts.ready.then(() => positionGlider(initialActive, false));
+    }
+  }
 
   filterTabs.forEach((tab) => {
     tab.addEventListener("click", () => {
+      if (tab.classList.contains("active")) return;
+
       filterTabs.forEach((t) => t.classList.remove("active"));
       tab.classList.add("active");
+
+      // Smoothly slide the blue indicator to the clicked tab
+      positionGlider(tab, true);
 
       const filter = tab.getAttribute("data-filter");
 
@@ -566,6 +624,20 @@ function initSkillsFilter() {
       });
     });
   });
+
+  // Keep glider perfectly aligned on resize
+  window.addEventListener("resize", () => {
+    const currentActive = document.querySelector(".filter-tab.active");
+    if (currentActive) positionGlider(currentActive, false);
+  });
+
+  if (window.ResizeObserver && tabsContainer) {
+    const ro = new ResizeObserver(() => {
+      const currentActive = document.querySelector(".filter-tab.active");
+      if (currentActive) positionGlider(currentActive, false);
+    });
+    ro.observe(tabsContainer);
+  }
 }
 
 // ==========================================

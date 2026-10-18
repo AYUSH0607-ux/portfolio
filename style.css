@@ -881,19 +881,58 @@ main, header, footer {
   display: flex;
   justify-content: center;
   margin-bottom: 40px;
+  max-width: 100%;
+  overflow-x: auto;
+  padding: 8px 12px;
+  -webkit-overflow-scrolling: touch;
 }
 
 .filter-tabs {
+  position: relative;
   display: inline-flex;
-  background: rgba(16, 22, 36, 0.6);
-  backdrop-filter: blur(14px);
+  background: rgba(16, 22, 36, 0.7);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
   padding: 6px;
   border-radius: var(--radius-full);
   border: 1px solid var(--border-glass);
   gap: 6px;
+  box-shadow: 0 4px 25px rgba(0, 0, 0, 0.4), inset 0 1px 0 rgba(255, 255, 255, 0.05);
+  flex-shrink: 0;
+  isolation: isolate;
+}
+
+/* Sliding active indicator blue pill */
+.filter-tab-glider {
+  position: absolute;
+  top: 0;
+  left: 0;
+  background: linear-gradient(135deg, #00f2fe 0%, #4facfe 100%);
+  border-radius: var(--radius-full);
+  box-shadow: 0 4px 18px rgba(0, 242, 254, 0.45), 0 0 25px rgba(0, 242, 254, 0.25);
+  pointer-events: none;
+  z-index: 1;
+  transform: translate3d(0, 0, 0);
+  transition: transform 0.4s cubic-bezier(0.25, 1.25, 0.35, 1),
+              width 0.36s cubic-bezier(0.25, 1.25, 0.35, 1),
+              height 0.35s ease,
+              opacity 0.25s ease;
+  will-change: transform, width;
+  opacity: 0;
+}
+
+.filter-tab-glider::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.28) 0%, rgba(255, 255, 255, 0) 65%);
+  pointer-events: none;
 }
 
 .filter-tab {
+  position: relative;
+  z-index: 2;
   background: transparent;
   border: none;
   color: var(--text-muted);
@@ -903,17 +942,25 @@ main, header, footer {
   padding: 8px 20px;
   border-radius: var(--radius-full);
   cursor: pointer;
-  transition: all var(--transition-fast);
+  transition: color 0.3s cubic-bezier(0.25, 1, 0.35, 1), background-color 0.2s ease;
+  user-select: none;
+  -webkit-tap-highlight-color: transparent;
+  white-space: nowrap;
 }
 
 .filter-tab:hover {
   color: #ffffff;
 }
 
+.filter-tab:not(.active):hover {
+  background: rgba(255, 255, 255, 0.04);
+}
+
 .filter-tab.active {
-  background: linear-gradient(135deg, #00f2fe 0%, #4facfe 100%);
   color: #030712;
-  box-shadow: 0 4px 15px rgba(0, 242, 254, 0.3);
+  font-weight: 700;
+  background: transparent;
+  box-shadow: none;
 }
 
 .skills-grid {
