@@ -20,15 +20,12 @@
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;700&family=Outfit:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 
   <!-- Main Stylesheet (with cache-busting) -->
-  <link rel="stylesheet" href="style.css?v=3.1">
+  <link rel="stylesheet" href="style.css?v=4.0">
 </head>
 <body>
-  <!-- Ambient Background Glows -->
+  <!-- Ambient Background Accents (Clean & Subtle) -->
   <div class="ambient-glow glow-top-left" aria-hidden="true"></div>
   <div class="ambient-glow glow-bottom-right" aria-hidden="true"></div>
-  <div class="ambient-glow glow-center" aria-hidden="true"></div>
-  <div class="ambient-glow glow-mid-left" aria-hidden="true"></div>
-  <div class="ambient-glow glow-mid-right" aria-hidden="true"></div>
 
   <!-- Interactive Particle Background Canvas -->
   <canvas id="particleCanvas" class="particle-canvas" aria-hidden="true"></canvas>
@@ -82,12 +79,12 @@
         <!-- Floating badge -->
         <div class="badge hero-badge">
           <span class="badge-icon">🧠</span>
-          <span class="badge-text">Student &bull; Aspiring AI Engineer &bull; Machine Learning Explorer</span>
+          <span class="badge-text">Student • Aspiring AI Engineer • Machine Learning Explorer</span>
         </div>
 
         <!-- Hero Headline -->
         <h1 class="hero-title">
-          Pioneering <span class="gradient-text glow-text">intelligent futures</span> with code &amp; AI.
+          Pioneering <span class="gradient-text">intelligent futures</span> with code &amp; AI.
         </h1>
 
         <!-- Typing tagline -->
@@ -101,7 +98,7 @@
 
         <!-- CTA Buttons -->
         <div class="hero-cta-group">
-          <a href="#projects" class="btn btn-lg btn-primary glow-button">
+          <a href="#projects" class="btn btn-lg btn-primary">
             <span>Explore AI Work</span>
             <svg class="btn-icon" viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2"><path d="M7 17l9.2-9.2M17 17V7H7"/></svg>
           </a>
@@ -146,11 +143,7 @@
         </span>
         <span class="scroll-text">SCROLL DOWN</span>
       </a>
-    </section>
-
-    <!-- ABOUT SECTION (Bento Grid) -->
-    <section class="section about-section" id="about">
-      <div class="section-container">
+<div class="section-container">
         <div class="section-header">
           <div class="section-badge">01. ABOUT AYUSH</div>
           <h2 class="section-title">Driven by curiosity, focused on <span class="gradient-text">Artificial Intelligence</span>.</h2>
@@ -159,7 +152,7 @@
 
         <div class="bento-grid">
           <!-- Bento 1: Story -->
-          <div class="bento-card bento-card-large glass-card">
+          <div class="bento-card glass-card">
             <div class="card-glow"></div>
             <div class="bento-icon-badge">🤖</div>
             <h3 class="bento-card-title">The Vision &amp; AI Mission</h3>
@@ -176,9 +169,7 @@
               <span class="tag">Deep Learning</span>
               <span class="tag">Problem Solver</span>
             </div>
-          </div>
-
-          <!-- Bento 2: Quick Spec Sheet -->
+          <!-- Bento 1: Profile Snapshot -->
           <div class="bento-card glass-card">
             <div class="card-glow"></div>
             <div class="bento-icon-badge">⚡</div>
@@ -758,7 +749,7 @@
                 <textarea id="messageBody" name="message" rows="5" class="form-input form-textarea" placeholder="Write your message here..." required></textarea>
               </div>
 
-              <button type="submit" class="btn btn-lg btn-primary btn-submit glow-button" id="submitBtn">
+              <button type="submit" class="btn btn-lg btn-primary btn-submit" id="submitBtn">
                 <span class="btn-text">Transmit Message</span>
                 <svg class="btn-icon" viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg>
               </button>
@@ -809,6 +800,6 @@
   <div class="toast-container" id="toastContainer" aria-live="polite"></div>
 
   <!-- Core JavaScript (with cache-busting) -->
-  <script src="script.js?v=3.1"></script>
+  <script src="script.js?v=4.0"></script>
 </body>
 </html>

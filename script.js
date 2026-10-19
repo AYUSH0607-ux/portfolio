@@ -279,131 +279,55 @@ function initParticleCanvas() {
     mouse.speed = 0;
   });
 
-  // High-density cosmic field: 360+ constant glowing balls across the screen
-  const particleCount = Math.min(Math.floor((width * height) / 3800), 360);
+  // Clean, minimal ambient starfield (calm, non-distracting)
+  const particleCount = Math.min(Math.floor((width * height) / 22000), 55);
   const particles = [];
 
-  const colorPalettes = [
-    { fill: "rgba(0, 242, 254,", glow: "#00f2fe" },    // Neon Cyan
-    { fill: "rgba(79, 172, 254,", glow: "#4facfe" },    // Electric Blue
-    { fill: "rgba(147, 51, 234,", glow: "#9333ea" },    // Electric Purple
-    { fill: "rgba(121, 40, 202,", glow: "#7928ca" },    // Deep Violet
-    { fill: "rgba(16, 185, 129,", glow: "#10b981" },    // Emerald Sparkle
-    { fill: "rgba(255, 0, 128,", glow: "#ff0080" }      // Cyberpunk Pink Accent
-  ];
-
-  class FloatingBall {
+  class MinimalDot {
     constructor() {
       this.x = Math.random() * width;
       this.y = Math.random() * height;
-
-      // Slow, relaxing ambient continuous drift
-      this.vx = (Math.random() - 0.5) * 0.45;
-      this.vy = (Math.random() - 0.5) * 0.45;
-
-      // Tiered ball sizing:
-      // ~60% small micro-balls (1.8px - 3.2px)
-      // ~28% medium glowing energy balls (4px - 7px)
-      // ~12% large cyber orbs (10px - 20px)
-      const rand = Math.random();
-      if (rand < 0.60) {
-        this.baseSize = Math.random() * 1.6 + 1.8;
-        this.type = "small";
-        this.baseAlpha = Math.random() * 0.45 + 0.35;
-        this.repelStrength = 3.2;
-      } else if (rand < 0.88) {
-        this.baseSize = Math.random() * 3 + 4;
-        this.type = "medium";
-        this.baseAlpha = Math.random() * 0.4 + 0.3;
-        this.repelStrength = 2.4;
-      } else {
-        this.baseSize = Math.random() * 10 + 10;
-        this.type = "large";
-        this.baseAlpha = Math.random() * 0.28 + 0.16;
-        this.repelStrength = 1.6;
-      }
-
-      this.size = this.baseSize;
-      this.color = colorPalettes[Math.floor(Math.random() * colorPalettes.length)];
-      this.pulseSpeed = Math.random() * 0.02 + 0.008;
-      this.pulseStep = Math.random() * Math.PI * 2;
+      this.vx = (Math.random() - 0.5) * 0.2;
+      this.vy = (Math.random() - 0.5) * 0.2;
+      this.size = Math.random() * 1.2 + 0.8; // subtle tiny dots (0.8px - 2.0px)
+      this.alpha = Math.random() * 0.25 + 0.15; // gentle, non-intrusive opacity
     }
 
     update() {
-      // 1. Continuous smooth ambient floating movement
       this.x += this.vx;
       this.y += this.vy;
 
-      // Seamless screen edge wrap-around
-      if (this.x < -20) this.x = width + 20;
-      else if (this.x > width + 20) this.x = -20;
-      if (this.y < -20) this.y = height + 20;
-      else if (this.y > height + 20) this.y = -20;
+      // Wrap around screen
+      if (this.x < -10) this.x = width + 10;
+      else if (this.x > width + 10) this.x = -10;
+      if (this.y < -10) this.y = height + 10;
+      else if (this.y > height + 10) this.y = -10;
 
-      // 2. Cursor avoidance proportional to cursor speed
+      // Subtle, calm cursor deflection
       if (mouse.x !== null && mouse.y !== null) {
         const dx = this.x - mouse.x;
         const dy = this.y - mouse.y;
         const dist = Math.sqrt(dx * dx + dy * dy);
 
-        if (dist < mouse.radius && dist > 0.01) {
-          // Smooth cosine curve: zero jerk at boundary
-          const ratio = dist / mouse.radius;
-          const proximity = 0.5 * (1 + Math.cos(ratio * Math.PI));
-
-          // Scales gently with cursor speed
-          const speedFactor = 0.3 + 0.7 * Math.min(mouse.speed / 12, 1.0);
-          const push = this.repelStrength * proximity * speedFactor;
-
-          const dirX = dx / dist;
-          const dirY = dy / dist;
-
-          // Gentle deflection
-          this.x += dirX * push;
-          this.y += dirY * push;
+        if (dist < 100 && dist > 0.01) {
+          const force = (1 - dist / 100) * 1.2;
+          this.x += (dx / dist) * force;
+          this.y += (dy / dist) * force;
         }
       }
-
-      // Gentle in-place breathing glow
-      this.pulseStep += this.pulseSpeed;
-      const pulseFactor = Math.sin(this.pulseStep) * 0.14 + 1;
-      this.size = this.baseSize * pulseFactor;
     }
 
     draw() {
-      ctx.save();
       ctx.beginPath();
-      ctx.arc(this.x, this.y, Math.max(0.5, this.size), 0, Math.PI * 2);
-
-      if (this.type === "large") {
-        const grad = ctx.createRadialGradient(
-          this.x,
-          this.y,
-          0,
-          this.x,
-          this.y,
-          this.size
-        );
-        grad.addColorStop(0, `${this.color.fill} ${this.baseAlpha * 1.5})`);
-        grad.addColorStop(0.5, `${this.color.fill} ${this.baseAlpha * 0.7})`);
-        grad.addColorStop(1, `${this.color.fill} 0)`);
-        ctx.fillStyle = grad;
-        ctx.shadowBlur = 20;
-        ctx.shadowColor = this.color.glow;
-      } else {
-        ctx.fillStyle = `${this.color.fill} ${this.baseAlpha})`;
-        ctx.shadowBlur = this.type === "medium" ? 14 : 8;
-        ctx.shadowColor = this.color.glow;
-      }
-
+      ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
+      ctx.fillStyle = `rgba(148, 163, 184, ${this.alpha})`;
       ctx.fill();
-      ctx.restore();
     }
   }
 
-  // Populate floating balls across the screen
+  // Populate subtle micro-dots across the canvas
   for (let i = 0; i < particleCount; i++) {
-    particles.push(new FloatingBall());
+    particles.push(new MinimalDot());
   }
 
   window.addEventListener("resize", () => {
